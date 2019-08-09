@@ -59,7 +59,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testOpenEmail()
     {
-        $mbox = imap_open("{imap.gmail.com:993/imap/ssl}", "creeperama01@gmail.com", "Toffee01");
+        $mbox = imap_open("{imap.gmail.com:993/imap/ssl}", "username", "password");
 
         codecept_debug("<h1>Mailboxes</h1>\n");
         $folders = imap_listmailbox($mbox, "{imap.gmail.com:993/imap/ssl}", "*");
