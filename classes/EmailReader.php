@@ -25,7 +25,7 @@ class EmailReader
      */
     function open($folder)
     {
-        $this->mailBox = null;
+        $this->folder = null;
     }
 
 
@@ -37,6 +37,7 @@ class EmailReader
     function search($searchSubject, $mailBox)
     {
         $this->searchSubject = null;
+        $this->mailBox = null;
     }
 
     /**
@@ -44,7 +45,7 @@ class EmailReader
      */
     function getMailBoxHeaders($mailBox)
     {
-
+        $this->mailBox = null;
     }
 
     /**
@@ -53,7 +54,8 @@ class EmailReader
      */
     function getMessageHeader($messageNumber, $mailBox)
     {
-
+        $this->messageNumber = null;
+        $this->mailBox = null;
     }
 
     /**
@@ -61,6 +63,6 @@ class EmailReader
      */
     function close($mailBox)
     {
-
+        $this->mailBox = null;
     }
 }
