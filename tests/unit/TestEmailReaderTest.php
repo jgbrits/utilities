@@ -44,20 +44,33 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $searchSubject = "Article";
 
-        $emailData = $emailReader->search($mailBox, "SUBJECT \"{$searchSubject} \"");
+        $searchData = $emailReader->search($mailBox, "SUBJECT \"{$searchSubject} \"");
 
-        return $emailData;
+        return $searchData;
     }
 
-    public function testHeaders()
+    public function testGetMailBoxHeaders()
     {
         $emailReader = $this->testCreate();
-        $emailData = $this->testSearch();
+        $mailBox = $this->testOpen();
 
-        $headers = $emailReader-> headers($emailData);
+        $mailBoxHeaders = $emailReader->getMailBoxHeaders($mailBox);
 
-        return $headers;
+        return $mailBoxHeaders;
     }
+
+    public function testGetMessageHeader()
+    {
+        $mailReader = $this->testCreate();
+        $mailBox = $this->testOpen();
+        $messageNumber = $this->testGetMailBoxHeaders();
+
+        $messageHeader = $mailReader->getMessageHeader($messageNumber, $mailBox=null);
+
+        return $messageHeader;
+    }
+
+
 
     public function testClose()
     {
