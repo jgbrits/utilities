@@ -1,17 +1,11 @@
-##  hello
+##Unit Testing
 
-Testing
-
-## new text
-```css
-
-.body {
-  
-}
-
+### How to create a unit test
+```sh
+vendor\bin\codecept g:test unit <testName>
 ```
 
-## another change
-
-Testing Again
- ##more text woo
+##Test code
+```
+vendor\bin\condecept run
+```
