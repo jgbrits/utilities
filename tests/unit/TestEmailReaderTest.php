@@ -28,10 +28,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testOpen()
     {
-
-        $emailReader = $this->testCreate();
-
-        $mailBox = $emailReader->open("INBOX");
+        $mailBox = $this->testCreate()->open("INBOX");
 
         return $mailBox;
     }
@@ -39,45 +36,33 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testSearch()
     {
-        $emailReader = $this->testCreate();
-        $mailBox = $this->testOpen();
-
         $searchSubject = "Article";
 
-        $searchData = $emailReader->search($mailBox, "SUBJECT \"{$searchSubject} \"");
+        $searchData = $this->testCreate()->search("SUBJECT \"{$searchSubject} \"", $this->testOpen());
 
         return $searchData;
     }
 
     public function testGetMailBoxHeaders()
     {
-        $emailReader = $this->testCreate();
-        $mailBox = $this->testOpen();
-
-        $mailBoxHeaders = $emailReader->getMailBoxHeaders($mailBox);
+        $mailBoxHeaders = $this->testCreate()->getMailBoxHeaders($this->testOpen());
 
         return $mailBoxHeaders;
     }
 
     public function testGetMessageHeader()
     {
-        $mailReader = $this->testCreate();
-        $mailBox = $this->testOpen();
-        $messageNumber = $this->testGetMailBoxHeaders();
-
-        $messageHeader = $mailReader->getMessageHeader($messageNumber, $mailBox=null);
+        $messageHeader = $this->testCreate()->getMessageHeader($this->testGetMailBoxHeaders(), $this->testOpen());
 
         return $messageHeader;
     }
 
 
-
     public function testClose()
     {
-
         $emailReader = $this->testCreate();
 
-        $emailReader->close();
+        $emailReader->close($this->testOpen());
 
     }
 

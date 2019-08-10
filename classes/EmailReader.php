@@ -8,6 +8,7 @@ class EmailReader
 {
     private $mailBox = null;
 
+
     /**
      * Email reader is used to read emails from an email server.
      * @param $host
@@ -20,39 +21,45 @@ class EmailReader
     }
 
     /**
-     *
+     * @param $folder
      */
-    function open()
+    function open($folder)
     {
         $this->mailBox = null;
     }
 
 
     /**
-     *
+     * @param $searchSubject
+     * @param $mailBox
      */
-    function search()
+
+    function search($searchSubject, $mailBox)
+    {
+        $this->searchSubject = null;
+    }
+
+    /**
+     * @param $mailBox
+     */
+    function getMailBoxHeaders($mailBox)
     {
 
     }
 
     /**
-     *
+     * @param $messageNumber
+     * @param $mailBox
      */
-    function getMailBoxHeaders()
-    {
-
-    }
-
-    function getMessageHeader()
+    function getMessageHeader($messageNumber, $mailBox)
     {
 
     }
 
     /**
-     *
+     * @param $mailBox
      */
-    function close()
+    function close($mailBox)
     {
 
     }
