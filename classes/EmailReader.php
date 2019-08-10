@@ -26,13 +26,6 @@ class EmailReader
 
     }
 
-    /**
-     *
-     */
-    function close()
-    {
-
-    }
 
     /**
      *
@@ -42,4 +35,19 @@ class EmailReader
 
     }
 
+    /**
+     *
+     */
+    function headers()
+    {
+
+    }
+
+    /**
+     *
+     */
+    function close()
+    {
+
+    }
 }

@@ -21,7 +21,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     // tests
     public function testCreate()
     {
-        $emailReader = new \Utilities\EmailReader("gmail.com", "usernamer123", "password123");
+        $emailReader = new \Utilities\EmailReader("gmail.com", "testemailclass654321@gmail.com", "test!23456789");
 
         return $emailReader;
     }
@@ -37,16 +37,6 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     }
 
 
-    public function testClose()
-    {
-
-        $emailReader = $this->testCreate();
-
-        $emailReader->close();
-
-
-    }
-
     public function testSearch()
     {
         $emailReader = $this->testCreate();
@@ -54,36 +44,29 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $searchSubject = "Article";
 
-        $emailReader->search($mailBox, "SUBJECT \"{$searchSubject} \"");
+        $emailData = $emailReader->search($mailBox, "SUBJECT \"{$searchSubject} \"");
+
+        return $emailData;
     }
 
-    public function testOpenEmail()
+    public function testHeaders()
     {
-        $mbox = imap_open("{imap.gmail.com:993/imap/ssl}", "username", "password");
+        $emailReader = $this->testCreate();
+        $emailData = $this->testSearch();
 
-        codecept_debug("<h1>Mailboxes</h1>\n");
-        $folders = imap_listmailbox($mbox, "{imap.gmail.com:993/imap/ssl}", "*");
+        $headers = $emailReader-> headers($emailData);
 
-        if ($folders == false) {
-            codecept_debug("Call failed<br />\n");
-        } else {
-            foreach ($folders as $val) {
-                codecept_debug($val . "<br />\n");
-            }
-        }
-
-        codecept_debug("<h1>Headers in INBOX</h1>\n");
-        $headers = imap_headers($mbox);
-
-        if ($headers == false) {
-            codecept_debug("Call failed<br />\n");
-        } else {
-            foreach ($headers as $val) {
-                codecept_debug($val . "<br />\n");
-            }
-        }
-
-        imap_close($mbox);
+        return $headers;
     }
+
+    public function testClose()
+    {
+
+        $emailReader = $this->testCreate();
+
+        $emailReader->close();
+
+    }
+
 
 }
