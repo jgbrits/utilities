@@ -31,37 +31,33 @@ class EmailReader
 
     /**
      * @param $searchSubject
-     * @param $mailBox
+     * @param null $mailBox
      */
-
-    function search($searchSubject, $mailBox)
+    function search($searchSubject, $mailBox = null)
     {
         $this->searchSubject = null;
-        $this->mailBox = null;
     }
 
     /**
-     * @param $mailBox
+     * @param null $mailBox
      */
-    function getMailBoxHeaders($mailBox)
+    function getMailBoxHeaders($mailBox = null)
     {
-        $this->mailBox = null;
     }
 
     /**
      * @param $messageNumber
-     * @param $mailBox
+     * @param null $mailBox
      */
-    function getMessageHeader($messageNumber, $mailBox)
+    function getMessageHeader($messageNumber, $mailBox = null)
     {
         $this->messageNumber = null;
-        $this->mailBox = null;
     }
 
     /**
      * @param $mailBox
      */
-    function close($mailBox)
+    function close($mailBox = null)
     {
         $this->mailBox = null;
     }

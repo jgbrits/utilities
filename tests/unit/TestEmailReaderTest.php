@@ -9,6 +9,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
      */
     protected $tester;
 
+
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
