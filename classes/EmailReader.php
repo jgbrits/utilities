@@ -8,52 +8,55 @@ class EmailReader
 {
     private $mailBox = null;
     private $host = null;
-    private $flags = null;
+    //Link to optional flags: https://www.php.net/manual/en/function.imap-open.php
+    private $flags = "/imap/ssl";
     private $username = null;
     private $password = null;
     private $port = null;
-    private $folder = null;
+    private $folderName = null;
 
 
     /**
      * Email reader is used to read emails from an email server..
      * @param $host
-     * @param $flags
+     * @param $port
      * @param $username
      * @param $password
-     * @param int $port
      */
-    function __construct($host, $port, $flags, $username, $password)
+    function __construct($host, $port, $username, $password)
     {
         $this->host = $host;
-        $this->flags = $flags;
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
     }
 
     /**
+     * @param null $folderName
      * @return resource|null
      */
-    function openMailBox()
+    function openMailBox($folderName = null)
     {
-        $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}", $this->username, $this->password);
+        $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
         return $this->mailBox;
     }
 
     /**
-     * @param $folder
+     * @param null $folderName
+     * @return resource|null
      */
-    function openMailBoxFolder($folder)
+    function openMailBoxFolder($folderName = null)
     {
-        $this->folder = null;
-    }
+        $mailBoxFolder = $this->openMailBox($folderName);
 
+        return $mailBoxFolder;
+    }
 
     /**
      * @param $searchSubject
      * @param null $mailBox
+     * @todo still busy
      */
     function search($searchSubject, $mailBox = null)
     {
@@ -62,14 +65,19 @@ class EmailReader
 
     /**
      * @param null $mailBox
+     * @return array
      */
     function getMailBoxHeaders($mailBox = null)
     {
+        $mailBoxHeaders = imap_headers($mailBox);
+
+        return $mailBoxHeaders;
     }
 
     /**
      * @param $messageNumber
      * @param null $mailBox
+     * @todo still busy
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
@@ -77,7 +85,8 @@ class EmailReader
     }
 
     /**
-     * @param $mailBox
+     * @param null $mailBox
+     * @todo still busy
      */
     function close($mailBox = null)
     {

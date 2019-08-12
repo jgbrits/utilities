@@ -14,7 +14,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", 993, "/imap/ssl}", "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", 993, "testemailclass654321@gmail.com", "test!23456789");
     }
 
     protected function _after()
@@ -23,18 +23,21 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testOpenMailBox()
     {
-        $this->assertNotTrue($this->emailReader->openMailBox(), "Returned FALSE, which means there is no imap stream");
+        $mailBox = $this->emailReader->openMailBox();
+        $this->assertNotTrue($mailBox, "Returned FALSE, which means there is no imap stream");
+        return $mailBox;
     }
 
     public function testOpenMailBoxFolder()
     {
-        $folder = "INBOX";
-        $mailBox = $this->emailReader->openMailBoxFolder("$folder");
+        $folderName = "INBOX";
+        $mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
+        $this->assertNotEmpty($mailBoxFolder, "Inbox is empty");
 
-        return $mailBox;
+        return $mailBoxFolder;
     }
 
-
+    //@todo - still busy
     public function testSearch()
     {
         $searchSubject = "Article";
@@ -44,13 +47,17 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $searchData;
     }
 
+
     public function testGetMailBoxHeaders()
     {
         $mailBoxHeaders = $this->emailReader->getMailBoxHeaders($this->testOpenMailBoxFolder());
 
+        $this->assertNotEmpty($mailBoxHeaders, "There are no headers in this array");
+
         return $mailBoxHeaders;
     }
 
+    //@todo - still busy
     public function testGetMessageHeader()
     {
         $messageHeader = $this->emailReader->getMessageHeader($this->testGetMailBoxHeaders(), $this->testOpenMailBoxFolder());
@@ -59,6 +66,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     }
 
 
+    //@todo - still busy
     public function testClose()
     {
         $this->emailReader->close($this->testOpenMailBox());
