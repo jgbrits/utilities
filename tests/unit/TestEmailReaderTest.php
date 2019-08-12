@@ -14,22 +14,22 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("gmail.com", "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "/imap/ssl}", "testemailclass654321@gmail.com", "test!23456789");
     }
 
     protected function _after()
     {
     }
 
-    public function testSetHandle()
+    public function testOpenMailBox()
     {
-        $this->assertNotTrue($this->emailReader->setHandle(),"Returned FALSE, which means there is no imap stream");
+        $this->assertNotTrue($this->emailReader->openMailBox(), "Returned FALSE, which means there is no imap stream");
     }
 
-    public function testOpen()
+    public function testOpenMailBoxFolder()
     {
         $folder = "INBOX";
-        $mailBox = $this->emailReader->open("$folder");
+        $mailBox = $this->emailReader->openMailBoxFolder("$folder");
 
         return $mailBox;
     }
@@ -39,21 +39,21 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     {
         $searchSubject = "Article";
 
-        $searchData = $this->emailReader->search("SUBJECT \"{$searchSubject} \"", $this->testOpen());
+        $searchData = $this->emailReader->search("SUBJECT \"{$searchSubject} \"", $this->testOpenMailBoxFolder());
 
         return $searchData;
     }
 
     public function testGetMailBoxHeaders()
     {
-        $mailBoxHeaders = $this->emailReader->getMailBoxHeaders($this->testOpen());
+        $mailBoxHeaders = $this->emailReader->getMailBoxHeaders($this->testOpenMailBoxFolder());
 
         return $mailBoxHeaders;
     }
 
     public function testGetMessageHeader()
     {
-        $messageHeader = $this->emailReader->getMessageHeader($this->testGetMailBoxHeaders(), $this->testOpen());
+        $messageHeader = $this->emailReader->getMessageHeader($this->testGetMailBoxHeaders(), $this->testOpenMailBoxFolder());
 
         return $messageHeader;
     }
@@ -61,7 +61,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testClose()
     {
-        $this->emailReader->close($this->testOpen());
+        $this->emailReader->close($this->testOpenMailBox());
 
     }
 

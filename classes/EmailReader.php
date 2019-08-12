@@ -8,43 +8,44 @@ class EmailReader
 {
     private $mailBox = null;
     private $host = null;
+    private $flags = null;
     private $username = null;
     private $password = null;
     private $port;
+    private $folder = null;
 
 
     /**
-     * Email reader is used to read emails from an email server.
+     * Email reader is used to read emails from an email server..
      * @param $host
+     * @param $flags
      * @param $username
      * @param $password
      * @param int $port
      */
-    function __construct($host, $username, $password, $port = 993)
+    function __construct($host, $flags, $username, $password, $port = 993)
     {
         $this->host = $host;
+        $this->flags = $flags;
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
     }
 
     /**
-     * @param $host
-     * @param $username
-     * @param $password
-     * @return resource
+     * @return resource|null
      */
-    function setHandle()
+    function openMailBox()
     {
-        $handle = imap_open("{imap.$this->host:$this->port/imap/ssl}", "$this->username", "$this->password");
+        $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}", $this->username, $this->password);
 
-        return $handle;
+        return $this->mailBox;
     }
 
     /**
      * @param $folder
      */
-    function open($folder)
+    function openMailBoxFolder($folder)
     {
         $this->folder = null;
     }
