@@ -59,6 +59,5 @@ class EmailReader
      */
     function close($mailBox = null)
     {
-        $this->mailBox = null;
     }
 }
