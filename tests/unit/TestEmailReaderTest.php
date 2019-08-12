@@ -21,15 +21,11 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     {
     }
 
-    // tests
-    /*
-    public function testCreate()
+    public function testSetHandle()
     {
-        $emailReader = new \Utilities\EmailReader("gmail.com", "testemailclass654321@gmail.com", "test!23456789");
-
-        return $emailReader;
+        $this->assertTrue($this->emailReader->setHandle());
     }
-*/
+
     public function testOpen()
     {
         $folder = "INBOX";
