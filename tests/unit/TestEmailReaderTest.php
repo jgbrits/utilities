@@ -23,7 +23,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testSetHandle()
     {
-        $this->assertTrue($this->emailReader->setHandle());
+        $this->assertNotTrue($this->emailReader->setHandle(),"Returned FALSE, which means there is no imap stream");
     }
 
     public function testOpen()
