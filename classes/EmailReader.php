@@ -11,7 +11,7 @@ class EmailReader
     private $flags = null;
     private $username = null;
     private $password = null;
-    private $port;
+    private $port = null;
     private $folder = null;
 
 
@@ -23,7 +23,7 @@ class EmailReader
      * @param $password
      * @param int $port
      */
-    function __construct($host, $flags, $username, $password, $port = 993)
+    function __construct($host, $port, $flags, $username, $password)
     {
         $this->host = $host;
         $this->flags = $flags;
