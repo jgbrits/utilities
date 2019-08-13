@@ -13,7 +13,6 @@ class EmailReader
     private $username = null;
     private $password = null;
     private $port = null;
-    private $folderName = null;
 
 
     /**
@@ -32,6 +31,7 @@ class EmailReader
     }
 
     /**
+     * Opens a mailbox stream
      * @param null $folderName
      * @return resource|null
      */
@@ -43,6 +43,7 @@ class EmailReader
     }
 
     /**
+     * Opens a mailbox stream in a specific mailbox folder
      * @param null $folderName
      * @return resource|null
      */
@@ -54,6 +55,7 @@ class EmailReader
     }
 
     /**
+     * Gets the message numbers of all messages that contain the parsed criteria
      * @param $searchCriteria
      * @param null $mailBox
      * @return array
@@ -66,6 +68,7 @@ class EmailReader
     }
 
     /**
+     * Uses the message numbers to get and put all the message headers into an array
      * @param $searchResult
      * @param null $mailBox
      * @return array
@@ -82,6 +85,7 @@ class EmailReader
     }
 
     /**
+     * Gets all the headers in the mailbox folder
      * @param null $mailBox
      * @return array
      */
@@ -93,6 +97,7 @@ class EmailReader
     }
 
     /**
+     * Gets the headers of a specific message
      * @param $messageNumber
      * @param null $mailBox
      * @todo still busy
@@ -103,6 +108,7 @@ class EmailReader
     }
 
     /**
+     * Closes the mailbox stream
      * @param null $mailBox
      * @todo still busy
      */
