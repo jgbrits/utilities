@@ -74,6 +74,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $messageHeadersArrayCount = count($messageHeaders);
 
+        $this->assertIsArray($messageHeaders, "Return was not an array");
         $this->assertNotEmpty($messageHeaders, "Array is empty");
         $this->assertEquals(2, $messageHeadersArrayCount, "Something went wrong in the method");
 
@@ -85,19 +86,37 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     {
         $mailBoxHeaders = $this->emailReader->getMailBoxHeaders($this->testOpenMailBoxFolder());
 
+        $this->assertIsArray($mailBoxHeaders, "Return was not an array");
         $this->assertNotEmpty($mailBoxHeaders, "There are no headers in this array");
 
         return $mailBoxHeaders;
     }
 
-    //@todo - still busy
+    public function testGetMessageNumbers()
+    {
+        $messageNumbers = $this->emailReader->getMessageNumbers($this->testGetMailBoxHeaders());
+        $messageNumbers2 = $this->emailReader->getMessageNumbers($this->testGetSearchResultHeaders());
+
+        $this->assertIsArray($messageNumbers, "Returned was not an array of message numbers");
+        $this->assertNotEmpty($messageNumbers, "Returned was empty");
+
+        $this->assertIsArray($messageNumbers2, "Returned was not an array of message numbers");
+        $this->assertNotEmpty($messageNumbers2, "Returned was empty");
+
+        return $messageNumbers;
+    }
+    
     public function testGetMessageHeader()
     {
-        $messageHeader = $this->emailReader->getMessageHeader($this->testGetMailBoxHeaders(), $this->testOpenMailBoxFolder());
+        $messageNumbers = $this->testGetMessageNumbers();
+
+        $messageHeader = $this->emailReader->getMessageHeader($messageNumbers[1], $this->testOpenMailBoxFolder());
+
+        $this->assertIsObject($messageHeader, "Return was not an object");
 
         return $messageHeader;
     }
-    
+
     public function testClose()
     {
         $resultBoolean = $this->emailReader->close($this->testOpenMailBox());

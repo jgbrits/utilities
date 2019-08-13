@@ -108,14 +108,56 @@ class EmailReader
     }
 
     /**
+     * Gets all the message numbers from the parsed headers
+     * @param $headers
+     * @return array
+     */
+    function getMessageNumbers($headers)
+    {
+        $messageNumbers = array();
+
+        /*Parsed headers from getSearchResultHeaders() are in an Object array and the results of getMailBoxHeaders() are in arrays
+         * Thus we have to test whether the first array value is an object or not
+         * Based on whether it is an object or not will affect how to get the message numbers from their respective header formats
+         * */
+        if (!is_object($headers[0])) {
+
+            foreach ($headers as $header) {
+
+                $messageHeaderInfo = array();
+                $tempMessageNumbers2 = array();
+                $tempHeader = trim($header);
+                $tempHeader2 = preg_replace("/\s+/", " ", $tempHeader);
+                $messageHeaderInfo += explode(" ", $tempHeader2);
+                $tempMessageNumbers = $messageHeaderInfo[1];
+                $tempMessageNumbers2 += explode(")", $tempMessageNumbers);
+                $messageNumbers[] = $tempMessageNumbers2[0];
+            }
+            return $messageNumbers;
+        } else {
+            $objectToArray = array();
+
+            foreach ($headers as $object) {
+                $objectToArray[] = get_object_vars($object);
+            }
+
+            $messageNumbersFromObject = array_column($objectToArray, "Msgno");
+
+            return $messageNumbersFromObject;
+        }
+    }
+
+    /**
      * Gets the headers of a specific message
      * @param $messageNumber
      * @param null $mailBox
-     * @todo still busy
+     * @return object
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
+        $messageHeader = imap_header($mailBox, $messageNumber);
 
+        return $messageHeader;
     }
 
     /**
