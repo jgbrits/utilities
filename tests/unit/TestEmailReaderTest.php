@@ -24,14 +24,28 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     public function testOpenMailBox()
     {
         $mailBox = $this->emailReader->openMailBox();
+
         $this->assertNotTrue($mailBox, "Returned FALSE, which means there is no imap stream");
+
         return $mailBox;
+    }
+
+    public function testGetMailBoxFolders()
+    {
+        $mailBoxArray = $this->emailReader->getMailBoxFolders($this->testOpenMailBox());
+
+        $this->assertIsArray($mailBoxArray, "Return was not an array of mailbox folders");
+        $this->assertNotEmpty($mailBoxArray, "Return has no mailbox folders");
+
+        return $mailBoxArray;
     }
 
     public function testOpenMailBoxFolder()
     {
         $folderName = "INBOX";
+
         $mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
+
         $this->assertNotEmpty($mailBoxFolder, "Inbox is empty");
 
         return $mailBoxFolder;
@@ -83,12 +97,12 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         return $messageHeader;
     }
-
-
-    //@todo - still busy
+    
     public function testClose()
     {
-        $this->emailReader->close($this->testOpenMailBox());
+        $resultBoolean = $this->emailReader->close($this->testOpenMailBox());
+
+        $this->assertTrue($resultBoolean, "Returned FALSE, this means the close failed");
 
     }
 

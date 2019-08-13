@@ -43,6 +43,17 @@ class EmailReader
     }
 
     /**
+     * Gets a list of mailbox folders
+     * @param null $mailBox
+     */
+    function getMailBoxFolders($mailBox = null)
+    {
+        $folders = imap_listmailbox($mailBox, "{{$this->host}}", "*");
+
+        return $folders;
+    }
+
+    /**
      * Opens a mailbox stream in a specific mailbox folder
      * @param null $folderName
      * @return resource|null
@@ -110,9 +121,12 @@ class EmailReader
     /**
      * Closes the mailbox stream
      * @param null $mailBox
-     * @todo still busy
+     * @return bool
      */
     function close($mailBox = null)
     {
+        $closeResult = imap_close($mailBox);
+
+        return $closeResult;
     }
 }
