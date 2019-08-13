@@ -54,13 +54,31 @@ class EmailReader
     }
 
     /**
-     * @param $searchSubject
+     * @param $searchCriteria
      * @param null $mailBox
-     * @todo still busy
+     * @return array
      */
-    function search($searchSubject, $mailBox = null)
+    function search($searchCriteria, $mailBox = null)
     {
-        $this->searchSubject = null;
+        $searchResult = imap_search($mailBox, $searchCriteria);
+
+        return $searchResult;
+    }
+
+    /**
+     * @param $searchResult
+     * @param null $mailBox
+     * @return array
+     */
+    function getSearchResultHeaders($searchResult, $mailBox = null)
+    {
+        $searchResultHeaders = array();
+
+        foreach ($searchResult as $messageNumber) {
+            $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
+        }
+
+        return $searchResultHeaders;
     }
 
     /**
@@ -81,7 +99,7 @@ class EmailReader
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
-        $this->messageNumber = null;
+
     }
 
     /**

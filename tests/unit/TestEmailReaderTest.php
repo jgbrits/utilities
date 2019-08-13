@@ -37,14 +37,33 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $mailBoxFolder;
     }
 
-    //@todo - still busy
     public function testSearch()
     {
-        $searchSubject = "Article";
+        //List of criteria: https://www.php.net/manual/en/function.imap-search.php
+        $searchCriteria = "SUBJECT \"test\"";
 
-        $searchData = $this->emailReader->search("SUBJECT \"{$searchSubject} \"", $this->testOpenMailBoxFolder());
+        $searchResult = $this->emailReader->search($searchCriteria, $this->testOpenMailBoxFolder());
 
-        return $searchData;
+        $searchArrayCount = count($searchResult);
+
+        $this->assertNotFalse($searchResult, "Returned FALSE, which means either incorrect criteria or no messages have been found");
+        $this->assertNotEmpty($searchResult, "Method failed");
+        $this->assertEquals(2, $searchArrayCount, "Something went wrong with the method");
+
+        return $searchResult;
+    }
+
+    public function testGetSearchResultHeaders()
+    {
+
+        $messageHeaders = $this->emailReader->getSearchResultHeaders($this->testSearch(), $this->testOpenMailBoxFolder());
+
+        $messageHeadersArrayCount = count($messageHeaders);
+
+        $this->assertNotEmpty($messageHeaders, "Array is empty");
+        $this->assertEquals(2, $messageHeadersArrayCount, "Something went wrong in the method");
+
+        return $messageHeaders;
     }
 
 
