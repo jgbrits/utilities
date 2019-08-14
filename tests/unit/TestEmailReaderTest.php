@@ -14,7 +14,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", 993, "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "testemailclass654321@gmail.com", "test!23456789");
     }
 
     protected function _after()
@@ -47,6 +47,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
 
         $this->assertNotEmpty($mailBoxFolder, "Inbox is empty");
+        $this->assertNotFalse($mailBoxFolder, "No mailbox folder parsed");
 
         return $mailBoxFolder;
     }
@@ -92,25 +93,21 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $mailBoxHeaders;
     }
 
-    public function testGetMessageNumbers()
+    public function testGetMessageNumbersForSearch()
     {
-        $messageNumbers = $this->emailReader->getMessageNumbers($this->testGetMailBoxHeaders());
-        $messageNumbers2 = $this->emailReader->getMessageNumbers($this->testGetSearchResultHeaders());
+        $messageNumbers = $this->emailReader->getMessageNumbersForSearch($this->testGetSearchResultHeaders());
 
         $this->assertIsArray($messageNumbers, "Returned was not an array of message numbers");
         $this->assertNotEmpty($messageNumbers, "Returned was empty");
 
-        $this->assertIsArray($messageNumbers2, "Returned was not an array of message numbers");
-        $this->assertNotEmpty($messageNumbers2, "Returned was empty");
-
         return $messageNumbers;
     }
-    
+
     public function testGetMessageHeader()
     {
-        $messageNumbers = $this->testGetMessageNumbers();
+        $messageNumber = 1;
 
-        $messageHeader = $this->emailReader->getMessageHeader($messageNumbers[1], $this->testOpenMailBoxFolder());
+        $messageHeader = $this->emailReader->getMessageHeader($messageNumber, $this->testOpenMailBoxFolder());
 
         $this->assertIsObject($messageHeader, "Return was not an object");
 
@@ -124,6 +121,5 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $this->assertTrue($resultBoolean, "Returned FALSE, this means the close failed");
 
     }
-
 
 }

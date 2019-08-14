@@ -22,7 +22,7 @@ class EmailReader
      * @param $username
      * @param $password
      */
-    function __construct($host, $port, $username, $password)
+    function __construct($host, $username, $password, $port = 993)
     {
         $this->host = $host;
         $this->username = $username;
@@ -56,13 +56,17 @@ class EmailReader
     /**
      * Opens a mailbox stream in a specific mailbox folder
      * @param null $folderName
-     * @return resource|null
+     * @return bool|resource|null
      */
     function openMailBoxFolder($folderName = null)
     {
-        $mailBoxFolder = $this->openMailBox($folderName);
+        if (isset($folderName) && !empty($folderName)) {
+            $mailBoxFolder = $this->openMailBox($folderName);
 
-        return $mailBoxFolder;
+            return $mailBoxFolder;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -108,43 +112,21 @@ class EmailReader
     }
 
     /**
-     * Gets all the message numbers from the parsed headers
-     * @param $headers
+     * Gets all the message numbers from the parsed search headers
+     * @param $searchHeaders
      * @return array
      */
-    function getMessageNumbers($headers)
+    function getMessageNumbersForSearch($searchHeaders)
     {
-        $messageNumbers = array();
+        $objectToArray = [];
 
-        /*Parsed headers from getSearchResultHeaders() are in an Object array and the results of getMailBoxHeaders() are in arrays
-         * Thus we have to test whether the first array value is an object or not
-         * Based on whether it is an object or not will affect how to get the message numbers from their respective header formats
-         * */
-        if (!is_object($headers[0])) {
-
-            foreach ($headers as $header) {
-
-                $messageHeaderInfo = array();
-                $tempMessageNumbers2 = array();
-                $tempHeader = trim($header);
-                $tempHeader2 = preg_replace("/\s+/", " ", $tempHeader);
-                $messageHeaderInfo += explode(" ", $tempHeader2);
-                $tempMessageNumbers = $messageHeaderInfo[1];
-                $tempMessageNumbers2 += explode(")", $tempMessageNumbers);
-                $messageNumbers[] = $tempMessageNumbers2[0];
-            }
-            return $messageNumbers;
-        } else {
-            $objectToArray = array();
-
-            foreach ($headers as $object) {
-                $objectToArray[] = get_object_vars($object);
-            }
-
-            $messageNumbersFromObject = array_column($objectToArray, "Msgno");
-
-            return $messageNumbersFromObject;
+        foreach ($searchHeaders as $object) {
+            $objectToArray[] = get_object_vars($object);
         }
+
+        $messageNumbersFromObject = array_column($objectToArray, "Msgno");
+
+        return $messageNumbersFromObject;
     }
 
     /**
