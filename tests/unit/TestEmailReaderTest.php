@@ -115,13 +115,22 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     }
 
     //@todo still busy
-    public function testFetchMessageStructure()
+    public function testGetMessageData()
     {
-        $messageStructure = $this->emailReader->fetchMessageStructure(4, $this->testOpenMailBoxFolder());
+        $messageData = $this->emailReader->getMessageData(4, $this->testOpenMailBoxFolder());
 
-        codecept_debug($messageStructure);
+        $this->assertIsArray($messageData, "Returned data is not an array");
+        $this->assertNotEmpty($messageData, "Returned array is empty");
+        $this->assertArrayHasKey("Body", $messageData, "Array does not contain this key");
 
-        return $messageStructure;
+        return $messageData;
+    }
+
+    public function testEditFlags()
+    {
+        $newFlags = $this->emailReader->editFlags();
+
+        return $newFlags;
     }
 
 
