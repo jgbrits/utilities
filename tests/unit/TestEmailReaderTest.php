@@ -114,6 +114,17 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $messageHeader;
     }
 
+    //@todo still busy
+    public function testFetchMessageStructure()
+    {
+        $messageStructure = $this->emailReader->fetchMessageStructure(4, $this->testOpenMailBoxFolder());
+
+        codecept_debug($messageStructure);
+
+        return $messageStructure;
+    }
+
+
     public function testClose()
     {
         $resultBoolean = $this->emailReader->close($this->testOpenMailBox());
