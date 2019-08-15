@@ -200,7 +200,9 @@ class EmailReader
 
                 $filename = ($params['filename']) ? $params['filename'] : $params['name'];
 
-                $attachments[] = "$filename => $data";
+                //@todo doesn't store data for PNG attachments - $attachments[] = array($filename => $data);
+                //Temporarily stores only the file names with no data
+                $attachments[] = $filename;
 
             }
         }
@@ -226,9 +228,11 @@ class EmailReader
         return $parts;
     }
 
-    function editFlags()
+    function editFlags($sequence, $flags, $mailBox = null)
     {
+        $editFlags = imap_setflag_full($mailBox, $sequence, $flags);
 
+        return $editFlags;
     }
 
     /**
