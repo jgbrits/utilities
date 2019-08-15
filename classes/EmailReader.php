@@ -228,11 +228,60 @@ class EmailReader
         return $parts;
     }
 
-    function editFlags($sequence, $flags, $mailBox = null)
+    /**
+     * @param $sequence
+     * $sequence contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param null $setFlags
+     * @param null $clearFlags
+     * @param null $mailBox
+     * @return bool|int
+     */
+    function editFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
-        $editFlags = imap_setflag_full($mailBox, $sequence, $flags);
+        if (isset($mailBox)) {
+            if (isset($setFlags) && isset($clearFlags)) {
 
-        return $editFlags;
+                $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
+                $editResult2 = imap_clearflag_full($mailBox, $sequence, $clearFlags);
+
+                if ($editResult && $editResult2) {
+                    return true;
+                } else {
+                    if ($editResult) {
+                        imap_clearflag_full($mailBox, $sequence, $setFlags);
+                    } elseif ($editResult2) {
+                        imap_setflag_full($mailBox, $sequence, $clearFlags);
+                    }
+                    return print "Failed to edit flags";
+                }
+
+            } elseif (isset($setFlags) && is_null($clearFlags)) {
+
+                $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
+
+                if ($editResult) {
+                    return true;
+                } else {
+                    return print "Failed to set flags";
+                }
+
+            } elseif (isset($clearFlags) && is_null($setFlags)) {
+
+                $editResult = imap_clearflag_full($mailBox, $sequence, $clearFlags);
+
+                if ($editResult) {
+                    return true;
+                } else {
+                    return print "Failed to clear flags";
+                }
+
+            } else {
+                return false;
+            }
+        } else {
+            return print "Invalid imap stream";
+        }
+
     }
 
     /**

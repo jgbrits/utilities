@@ -127,7 +127,10 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testEditFlags()
     {
+        //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
         $newFlags = $this->emailReader->editFlags();
+
+        $this->assertTrue($newFlags,"Returned was FALSE, meaning it failed to set flags to the message");
 
         return $newFlags;
     }
