@@ -114,10 +114,9 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $messageHeader;
     }
 
-    //@todo still busy
     public function testGetMessageData()
     {
-        $messageData = $this->emailReader->getMessageData(9, $this->testOpenMailBoxFolder());
+        $messageData = $this->emailReader->getMessageData(10, $this->testOpenMailBoxFolder());
 
         $this->assertIsArray($messageData, "Returned data is not an array");
         $this->assertNotEmpty($messageData, "Returned array is empty");

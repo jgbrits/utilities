@@ -196,12 +196,12 @@ class EmailReader
                 $params[strtolower($x->attribute)] = $x->value;
             }
 
-            //@todo - fix so it adds separate instances of attachments with the same name
             if ($params['filename'] || $params['name']) {
 
                 $filename = ($params['filename']) ? $params['filename'] : $params['name'];
 
-                $attachments[$filename] = $data;
+                $attachments[] = "$filename => $data";
+
             }
         }
 
