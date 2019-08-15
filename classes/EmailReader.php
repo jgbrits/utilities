@@ -142,150 +142,88 @@ class EmailReader
         return $messageHeader;
     }
 
-    /*
-     * @param $messageNumber
-     * @param $part
-     * @param $partNumber
-     * @param null $mailBox
-     * @todo ignore this
-
-        function getMessagePartTest($messageNumber, $part, $partNumber, $mailBox = null)
-        {
-            global $htmlMsg, $plainMsg, $charset, $attachments;
-
-            $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
-
-            if ($part->encoding == 4) {
-                $data = quoted_printable_decode($data);
-            } elseif ($part - encoding == 3) {
-                $data = base64_decode($data);
-            }
-
-            $params = [];
-            if ($part->parameters) {
-                foreach ($part->parameters as $x) {
-                    $params[strtolower($x->attribute)] = $x->value;
-                }
-            }
-            if ($part->dparameters) {
-                foreach ($part->dparameters as $x) {
-                    $params[strtolower($x->attribute)] = $x->value;
-                }
-            }
-
-            if ($params['filename'] || $params['name']) {
-                $filename = ($params['filename']) ? $params['filename'] : $params['name'];
-
-                $attachments[$filename] = $data;
-            }
-
-            if ($part->type == 0 && $data) {
-                if (strtolower($part->subtype) == 'plain') {
-                    $plainMsg .= trim($data) . "\n\n";
-                } else {
-                    $htmlMsg .= $data . "<br><br>";
-                    $charset = $params['charset'];
-                }
-            }
-
-            if ($part->parts) {
-                foreach ($part->parts as $partNo0 => $p2) {
-                    $this->getMessagePart($messageNumber, $p2, $partNumber . "." . ($partNo0 + 1), $mailBox);
-                }
-            }
-
-        }
-
-
+    /**
+     * Returns the ending result data array containing all the message's data
      * @param $messageNumber
      * @param null $mailBox
-     * @todo ignore this
-
-    function getMessageTest($messageNumber, $mailBox = null)
-    {
-        global $charset, $htmlMsg, $plainMsg, $attachments;
-        $htmlMsg = $plainMsg = $charset = '';
-
-        $header = $this->getMessageHeader($messageNumber, $mailBox);
-
-        $structure = imap_fetchstructure($mailBox, $messageNumber);
-
-        if (!$structure->parts) {
-            $this->getMessagePart($messageNumber, $structure, 0, $mailBox);
-        } else {
-            foreach ($structure->parts as $partNumber0 => $p) {
-                $this->getMessagePart($messageNumber, $p, $partNumber0 + 1, $mailBox);
-            }
-        }
-    }
-*/
-
-    /*
-         *@todo ignore this - another test method
-
-            function create_part_array($structure, $prefix = "")
-            {
-                //print_r($structure);
-                if (sizeof($structure->parts) > 0) {    // There some sub parts
-                    foreach ($structure->parts as $count => $part) {
-                        add_part_to_array($part, $prefix . ($count + 1), $part_array);
-                    }
-                } else {    // Email does not have a seperate mime attachment for text
-                    $part_array[] = array('part_number' => $prefix . '1', 'part_object' => $obj);
-                }
-                return $part_array;
-            }
-
-        // Sub function for create_part_array(). Only called by create_part_array() and itself.
-            function add_part_to_array($obj, $partno, & $part_array)
-            {
-                $part_array[] = array('part_number' => $partno, 'part_object' => $obj);
-                if ($obj->type == 2) { // Check to see if the part is an attached email message, as in the RFC-822 type
-                    //print_r($obj);
-                    if (sizeof($obj->parts) > 0) {    // Check to see if the email has parts
-                        foreach ($obj->parts as $count => $part) {
-                            // Iterate here again to compensate for the broken way that imap_fetchbody() handles attachments
-                            if (sizeof($part->parts) > 0) {
-                                foreach ($part->parts as $count2 => $part2) {
-                                    add_part_to_array($part2, $partno . "." . ($count2 + 1), $part_array);
-                                }
-                            } else {    // Attached email does not have a seperate mime attachment for text
-                                $part_array[] = array('part_number' => $partno . '.' . ($count + 1), 'part_object' => $obj);
-                            }
-                        }
-                    } else {    // Not sure if this is possible
-                        $part_array[] = array('part_number' => $prefix . '.1', 'part_object' => $obj);
-                    }
-                } else {    // If there are more sub-parts, expand them out.
-                    if (sizeof($obj->parts) > 0) {
-                        foreach ($obj->parts as $count => $p) {
-                            add_part_to_array($p, $partno . "." . ($count + 1), $part_array);
-                        }
-                    }
-                }
-            }
-
-        */
+     * @return array
+     */
     function getMessageData($messageNumber, $mailBox = null)
     {
         $messageDataArray = [];
 
         $structure = imap_fetchstructure($mailBox, $messageNumber);
 
-        if (sizeof($structure->parts) > 0) {
-            $messageDataArray[] = $this->addMessageDataToArray();
+        if (!$structure->parts) {
+            $messageDataArray = $this->addMessageDataToArray($messageNumber, $structure, 0, $mailBox);
         } else {
-            $messageDataArray[] = $this->addMessageDataToArray();
+            foreach ($structure->parts as $partNumber0 => $p) {
+                $messageDataArray = $this->addMessageDataToArray($messageNumber, $p, $partNumber0 + 1, $mailBox);
+            }
         }
 
         return $messageDataArray;
     }
 
-    function addMessageDataToArray()
+    /**
+     * Returns the array containing the accumulated message parts
+     * @param $messageNumber
+     * @param $part
+     * @param $partNumber
+     * @param null $mailBox
+     * @return array
+     */
+    function addMessageDataToArray($messageNumber, $part, $partNumber, $mailBox = null)
     {
-        $data = null;
+        global $htmlMsg, $plainMsg, $charset, $attachments;
 
-        return $data;
+        $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
+
+        if ($part->encoding == 4) {
+            $data = quoted_printable_decode($data);
+        } elseif ($part->encoding == 3) {
+            $data = base64_decode($data);
+        }
+
+        $params = [];
+        if ($part->parameters) {
+            foreach ($part->parameters as $x) {
+                $params[strtolower($x->attribute)] = $x->value;
+            }
+        }
+        if ($part->ifdparameters == 1) {
+            foreach ($part->dparameters as $x) {
+                $params[strtolower($x->attribute)] = $x->value;
+            }
+
+            //@todo - fix so it adds separate instances of attachments with the same name
+            if ($params['filename'] || $params['name']) {
+
+                $filename = ($params['filename']) ? $params['filename'] : $params['name'];
+
+                $attachments[$filename] = $data;
+            }
+        }
+
+
+        if ($part->type == 0 && $data) {
+            if (strtolower($part->subtype) == 'plain') {
+                $plainMsg .= trim($data) . "\n\n";
+            } else {
+                $htmlMsg .= $data . "<br><br>";
+                $charset = $params['charset'];
+            }
+        }
+
+        if (isset($part->parts)) {
+            foreach ($part->parts as $partNo0 => $p2) {
+                $this->addMessageDataToArray($messageNumber, $p2, $partNumber . "." . ($partNo0 + 1), $mailBox);
+            }
+        }
+
+        $parts = array("HTML message" => $htmlMsg, "Plain Message" => $plainMsg, "Charset" => $charset, "Attachments" => $attachments);
+
+        return $parts;
     }
 
     function editFlags()

@@ -105,7 +105,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testGetMessageHeader()
     {
-        $messageNumber = 1;
+        $messageNumber = 3;
 
         $messageHeader = $this->emailReader->getMessageHeader($messageNumber, $this->testOpenMailBoxFolder());
 
@@ -117,11 +117,11 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     //@todo still busy
     public function testGetMessageData()
     {
-        $messageData = $this->emailReader->getMessageData(4, $this->testOpenMailBoxFolder());
+        $messageData = $this->emailReader->getMessageData(9, $this->testOpenMailBoxFolder());
 
         $this->assertIsArray($messageData, "Returned data is not an array");
         $this->assertNotEmpty($messageData, "Returned array is empty");
-        $this->assertArrayHasKey("Body", $messageData, "Array does not contain this key");
+        $this->assertArrayHasKey("HTML message", $messageData, "Returned array doesn't contain the HTML key");
 
         return $messageData;
     }
