@@ -240,6 +240,10 @@ class EmailReader
     {
         $closeResult = imap_close($mailBox);
 
-        return $closeResult;
+        if ($closeResult) {
+            return $closeResult;
+        } else {
+            return print "There was no imap stream to close";
+        }
     }
 }
