@@ -252,7 +252,7 @@ class EmailReader
                     } elseif ($editResult2) {
                         imap_setflag_full($mailBox, $sequence, $clearFlags);
                     }
-                    return print "Failed to edit flags";
+                    return false;
                 }
 
             } elseif (isset($setFlags) && is_null($clearFlags)) {
@@ -262,7 +262,7 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return print "Failed to set flags";
+                    return false;
                 }
 
             } elseif (isset($clearFlags) && is_null($setFlags)) {
@@ -272,14 +272,14 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return print "Failed to clear flags";
+                    return false;
                 }
 
             } else {
                 return false;
             }
         } else {
-            return print "Invalid imap stream";
+            return false;
         }
 
     }
@@ -296,7 +296,7 @@ class EmailReader
         if ($closeResult) {
             return $closeResult;
         } else {
-            return print "There was no imap stream to close";
+            return false;
         }
     }
 }
