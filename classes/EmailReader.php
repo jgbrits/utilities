@@ -14,9 +14,17 @@ class EmailReader
     private $password = null;
     private $port = null;
 
+    /**
+     * @var EmailReaderError
+     */
+    private $error1;
+    private $error2;
+    private $error3;
+    private $error4;
+    private $error5;
 
     /**
-     * Email reader is used to read emails from an email server..
+     * EmailMessage reader is used to read emails from an email server..
      * @param $host
      * @param $port
      * @param $username
@@ -28,18 +36,43 @@ class EmailReader
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
+
+        $this->error1 = new EmailReaderError();
+        $this->error1->code = 1;
+        $this->error1->message = "Failed to open mailbox";
+
+        $this->error2 = new EmailReaderError();
+        $this->error2->code = 2;
+        $this->error2->message = "Failed to set and clear flags";
+
+        $this->error3 = new EmailReaderError();
+        $this->error3->code = 3;
+        $this->error3->message = "Failed to set flags";
+
+        $this->error4 = new EmailReaderError();
+        $this->error4->code = 4;
+        $this->error4->message = "Failed to clear flags";
+
+        $this->error5 = new EmailReaderError();
+        $this->error5->code = 5;
+        $this->error5->message = "Only NULL values have been parsed";
     }
 
     /**
-     * Opens a mailbox stream
      * @param null $folderName
-     * @return resource|null
+     * @return bool|resource|string|null
      */
     function openMailBox($folderName = null)
     {
         $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
-        return $this->mailBox;
+        if (isset($this->mailBox)) {
+
+            return $this->mailBox;
+        } else {
+
+            return $this->error1->getError();
+        }
     }
 
     /**
@@ -146,23 +179,23 @@ class EmailReader
      * Returns the ending result data array containing all the message's data
      * @param $messageNumber
      * @param null $mailBox
-     * @return array
+     * @return object
      */
     function getMessageData($messageNumber, $mailBox = null)
     {
-        $messageDataArray = [];
+        $emailMessage = (object)[];
 
         $structure = imap_fetchstructure($mailBox, $messageNumber);
 
         if (!$structure->parts) {
-            $messageDataArray = $this->addMessageDataToArray($messageNumber, $structure, 0, $mailBox);
+            $emailMessage = $this->addMessageDataToArray($messageNumber, $structure, 0, $mailBox);
         } else {
             foreach ($structure->parts as $partNumber0 => $p) {
-                $messageDataArray = $this->addMessageDataToArray($messageNumber, $p, $partNumber0 + 1, $mailBox);
+                $emailMessage = $this->addMessageDataToArray($messageNumber, $p, $partNumber0 + 1, $mailBox);
             }
         }
 
-        return $messageDataArray;
+        return $emailMessage;
     }
 
     /**
@@ -171,7 +204,7 @@ class EmailReader
      * @param $part
      * @param $partNumber
      * @param null $mailBox
-     * @return array
+     * @return object
      */
     function addMessageDataToArray($messageNumber, $part, $partNumber, $mailBox = null)
     {
@@ -212,7 +245,7 @@ class EmailReader
             if (strtolower($part->subtype) == 'plain') {
                 $plainMsg .= trim($data) . "\n\n";
             } else {
-                $htmlMsg .= $data . "<br><br>";
+                $htmlMsg .= $data;
                 $charset = $params['charset'];
             }
         }
@@ -223,23 +256,23 @@ class EmailReader
             }
         }
 
-        $parts = array("HTML message" => $htmlMsg, "Plain Message" => $plainMsg, "Charset" => $charset, "Attachments" => $attachments);
+        $messageParts = (object)["htmlMessage" => $htmlMsg, "plainMessage" => $plainMsg, "charset" => $charset, "attachments" => $attachments];
 
-        return $parts;
+        return $messageParts;
     }
 
     /**
-     * @param $sequence
      * $sequence contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param $sequence
      * @param null $setFlags
      * @param null $clearFlags
      * @param null $mailBox
-     * @return bool|int
+     * @return bool|EmailReaderError
      */
     function editFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
         if (isset($mailBox)) {
-            if (isset($setFlags) && isset($clearFlags)) {
+            if (isset($setFlags) && isset($clearFlags) && !isEmpty($setFlags) && !isEmpty($clearFlags)) {
 
                 $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
                 $editResult2 = imap_clearflag_full($mailBox, $sequence, $clearFlags);
@@ -252,34 +285,34 @@ class EmailReader
                     } elseif ($editResult2) {
                         imap_setflag_full($mailBox, $sequence, $clearFlags);
                     }
-                    return false;
+                    return $this->error2->getError();
                 }
 
-            } elseif (isset($setFlags) && is_null($clearFlags)) {
+            } elseif (isset($setFlags) && !isEmpty($setFlags) && is_null($clearFlags)) {
 
                 $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
 
                 if ($editResult) {
                     return true;
                 } else {
-                    return false;
+                    return $this->error3->getError();
                 }
 
-            } elseif (isset($clearFlags) && is_null($setFlags)) {
+            } elseif (isset($clearFlags) && !isEmpty($clearFlags) && is_null($setFlags)) {
 
                 $editResult = imap_clearflag_full($mailBox, $sequence, $clearFlags);
 
                 if ($editResult) {
                     return true;
                 } else {
-                    return false;
+                    return $this->error4->getError();
                 }
 
             } else {
-                return false;
+                return $this->error5->getError();
             }
         } else {
-            return false;
+            return $this->error1->getError();
         }
 
     }
@@ -298,5 +331,24 @@ class EmailReader
         } else {
             return false;
         }
+    }
+}
+
+/**
+ * Class EmailReaderError
+ * @package Utilities
+ */
+class EmailReaderError
+{
+    public $code = false;
+    public $message = false;
+
+    function getError()
+    {
+        if ($this->code !== false && $this->message !== false) {
+            return "Error {$this->code}: {$this->message}";
+        }
+
+        return false;
     }
 }

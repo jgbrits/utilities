@@ -116,11 +116,13 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testGetMessageData()
     {
-        $messageData = $this->emailReader->getMessageData(10, $this->testOpenMailBoxFolder());
+        $messageNumber = 7;
 
-        $this->assertIsArray($messageData, "Returned data is not an array");
+        $messageData = $this->emailReader->getMessageData($messageNumber, $this->testOpenMailBoxFolder());
+
+        $this->assertIsObject($messageData, "Returned data is not an object");
         $this->assertNotEmpty($messageData, "Returned array is empty");
-        $this->assertArrayHasKey("HTML message", $messageData, "Returned array doesn't contain the HTML key");
+        $this->assertObjectHasAttribute("htmlMessage", $messageData, "Returned object doesn't have the attribute");
 
         return $messageData;
     }
@@ -128,9 +130,14 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     public function testEditFlags()
     {
         //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
-        $newFlags = $this->emailReader->editFlags();
 
-        $this->assertTrue($newFlags,"Returned was FALSE, meaning it failed to set flags to the message");
+        $messageNumberSequence = null;
+        $setFlags = null;
+        $clearFlags = null;
+
+        $newFlags = $this->emailReader->editFlags($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
+
+        $this->assertTrue($newFlags, "Returned was FALSE, meaning it failed to set flags to the message");
 
         return $newFlags;
     }
