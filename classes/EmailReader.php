@@ -5,17 +5,6 @@ namespace Utilities;
 
 use Utilities\EmailReaderError;
 
-use function imap_clearflag_full;
-use function imap_close;
-use function imap_fetchbody;
-use function imap_fetchstructure;
-use function imap_header;
-use function imap_headers;
-use function imap_open;
-use function imap_list;
-use function imap_search;
-use function imap_setflag_full;
-
 class EmailReader
 {
     private $mailBox = null;
