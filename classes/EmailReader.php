@@ -3,8 +3,6 @@
 
 namespace Utilities;
 
-require "vendor/autoload.php";
-
 use Utilities\EmailReaderError;
 
 use function imap_clearflag_full;
