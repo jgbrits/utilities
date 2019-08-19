@@ -58,11 +58,11 @@ class EmailReader
                 return $this->mailBox;
             } else {
 
-                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM);
+                return new EmailReaderError ("EMAIL_ERROR_IMAP_STREAM");
             }
         } else {
 
-            return new EmailReaderError (EMAIL_ERROR_IMAP_ERROR);
+            return new EmailReaderError ("EMAIL_ERROR_IMAP_ERROR");
         }
 
     }
@@ -91,7 +91,7 @@ class EmailReader
 
             return $mailBoxFolder;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER);
+            return new EmailReaderError ("EMAIL_ERROR_MAILBOX_FOLDER");
         }
     }
 
