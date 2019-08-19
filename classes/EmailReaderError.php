@@ -37,7 +37,6 @@ class EmailReaderError
         define("EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE", "Failed to edit message flags");
 
 
-
         function getError()
         {
             if ($this->code !== false && $this->message !== false) {

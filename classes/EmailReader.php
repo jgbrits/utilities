@@ -58,11 +58,11 @@ class EmailReader
                 return $this->mailBox;
             } else {
 
-                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM);
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
             }
         } else {
 
-            return new EmailReaderError (EMAIL_ERROR_IMAP_ERROR);
+            return new EmailReaderError (EMAIL_ERROR_IMAP_ERROR, EMAIL_ERROR_IMAP_ERROR_MESSAGE);
         }
 
     }
@@ -91,7 +91,7 @@ class EmailReader
 
             return $mailBoxFolder;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER);
+            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER, EMAIL_ERROR_MAILBOX_FOLDER_MESSAGE);
         }
     }
 
@@ -279,7 +279,7 @@ class EmailReader
                     } elseif ($editResult2) {
                         imap_setflag_full($mailBox, $sequence, $clearFlags);
                     }
-                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS);
+                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS, EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE);
                 }
 
             } elseif (isset($setFlags) && !isEmpty($setFlags) && is_null($clearFlags)) {
@@ -289,7 +289,7 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS);
+                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS, EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE);
                 }
 
             } elseif (isset($clearFlags) && !isEmpty($clearFlags) && is_null($setFlags)) {
@@ -299,14 +299,14 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS);
+                    return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS, EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE);
                 }
 
             } else {
-                return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS);
+                return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS, EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE);
             }
         } else {
-            return new EmailReaderError(EMAIL_ERROR_IMAP_STREAM);
+            return new EmailReaderError(EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
         }
 
     }
