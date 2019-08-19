@@ -66,7 +66,6 @@ class EmailReader
      */
     function openMailBox($folderName = null)
     {
-        if (isset($folderName) && !empty($folderName)) {
             $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
             if (isset($this->mailBox)) {
@@ -76,9 +75,6 @@ class EmailReader
 
                 return $this->error1->getError();
             }
-        } else {
-            return false;
-        }
     }
 
     /**

@@ -4,5 +4,13 @@
   },
   "require": {
     "ext-imap": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "classes"
+    ],
+    "psr-4": {
+      "Utilities\\":"classes/"
+    }
   }
 }

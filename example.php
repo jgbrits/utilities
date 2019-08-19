@@ -7,13 +7,16 @@
  */
 
 require_once  "vendor/autoload.php";
-require_once  "classes/EmailReader.php";
 
 
 $emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.oxyros", "jct1969");
 
-$folders = $emailReader->getMailBoxFolders("");
+$mailBox = $emailReader->openMailBox();
 
+$folders = $emailReader->getMailBoxFolders($mailBox);
+
+
+print_r ($folders);
 //Open a connection to server
 //Get a list of folders from the server
 //Get a list of email headers from one of the folders - how do I know which folder ?
