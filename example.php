@@ -11,6 +11,7 @@ require_once  "vendor/autoload.php";
 
 $emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.oxyros", "jct1969", 143);
 
+
 $mailBox = $emailReader->openMailBox();
 
 $folders = $emailReader->getMailBoxFolders($mailBox);

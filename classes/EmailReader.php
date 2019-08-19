@@ -21,7 +21,7 @@ class EmailReader
     private $mailBox = null;
     private $host = null;
     //Link to optional flags: https://www.php.net/manual/en/function.imap-open.php
-    private $flags = "/imap/ssl";
+    private $flags = null;
     private $username = null;
     private $password = null;
     public $port = null;
@@ -42,17 +42,21 @@ class EmailReader
     }
 
     /**
-     * @param null $folderName
-     * @return bool|resource|string|null
+     * Gets back a mail box handle for all future processing
+     * @param null $flags
+     * @param $folderName
+     * @return resource|\Utilities\EmailReaderError|null
      */
-    function openMailBox($folderName = null)
+    function openMailBox( $flags= "/imap/ssl" ,$folderName = nulll)
     {
+        if (!empty($flags)) {
+            $this->flags = $flags;
+        }
         if (function_exists("imap_open")) {
 
             $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
             if (isset($this->mailBox)) {
-
                 return $this->mailBox;
             } else {
 
