@@ -7,10 +7,11 @@
   },
   "autoload": {
     "classmap": [
-      "classes"
+      "./classes/EmailReader.php",
+      "./classes/EmailReaderError.php"
     ],
     "psr-4": {
-      "Utilities\\":"classes/"
+      "Utilities\\": "classes/"
     }
   }
 }

@@ -14,7 +14,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("oxyros.co.za", "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "testemailclass654321@gmail.com", "test!23456789");
     }
 
     protected function _after()
@@ -127,7 +127,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $messageData;
     }
 
-    public function testEditFlags()
+    public function testEditMessageFlags()
     {
         //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
 
@@ -135,7 +135,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $setFlags = null;
         $clearFlags = null;
 
-        $newFlags = $this->emailReader->editFlags($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
+        $newFlags = $this->emailReader->editMessageFlags($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
 
         $this->assertTrue($newFlags, "Returned was FALSE, meaning it failed to set flags to the message");
 

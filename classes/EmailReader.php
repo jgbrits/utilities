@@ -3,6 +3,20 @@
 
 namespace Utilities;
 
+require "vendor/autoload.php";
+
+use Utilities\EmailReaderError;
+
+use function imap_clearflag_full;
+use function imap_close;
+use function imap_fetchbody;
+use function imap_fetchstructure;
+use function imap_header;
+use function imap_headers;
+use function imap_open;
+use function imap_list;
+use function imap_search;
+use function imap_setflag_full;
 
 class EmailReader
 {
@@ -12,18 +26,7 @@ class EmailReader
     private $flags = "/imap/ssl";
     private $username = null;
     private $password = null;
-    private $port = null;
-
-    /**
-     * @var EmailReaderError
-     */
-
-    //
-    private $error1;
-    private $error2;
-    private $error3;
-    private $error4;
-    private $error5;
+    public $port = null;
 
     /**
      * EmailMessage reader is used to read emails from an email server..
@@ -38,26 +41,6 @@ class EmailReader
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
-
-        $this->error1 = new EmailReaderError();
-        $this->error1->code = 1;
-        $this->error1->message = "Failed to open mailbox";
-
-        $this->error2 = new EmailReaderError();
-        $this->error2->code = 2;
-        $this->error2->message = "Failed to set and clear flags";
-
-        $this->error3 = new EmailReaderError();
-        $this->error3->code = 3;
-        $this->error3->message = "Failed to set flags";
-
-        $this->error4 = new EmailReaderError();
-        $this->error4->code = 4;
-        $this->error4->message = "Failed to clear flags";
-
-        $this->error5 = new EmailReaderError();
-        $this->error5->code = 5;
-        $this->error5->message = "Only NULL values have been parsed";
     }
 
     /**
@@ -66,6 +49,8 @@ class EmailReader
      */
     function openMailBox($folderName = null)
     {
+        if (function_exists("imap_open")) {
+
             $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
             if (isset($this->mailBox)) {
@@ -73,17 +58,23 @@ class EmailReader
                 return $this->mailBox;
             } else {
 
-                return $this->error1->getError();
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM);
             }
+        } else {
+
+            return new EmailReaderError (EMAIL_ERROR_IMAP_ERROR);
+        }
+
     }
 
     /**
      * Gets a list of mailbox folders
      * @param null $mailBox
+     * @return array
      */
     function getMailBoxFolders($mailBox = null)
     {
-        $folders = \imap_listmailbox($mailBox, "{{$this->host}}", "*");
+        $folders = imap_list($mailBox, "{{$this->host}}", "*");
 
         return $folders;
     }
@@ -91,7 +82,7 @@ class EmailReader
     /**
      * Opens a mailbox stream in a specific mailbox folder
      * @param null $folderName
-     * @return bool|resource|null
+     * @return bool|resource|string|EmailReaderError|null
      */
     function openMailBoxFolder($folderName = null)
     {
@@ -100,7 +91,7 @@ class EmailReader
 
             return $mailBoxFolder;
         } else {
-            return false;
+            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER);
         }
     }
 
@@ -214,9 +205,9 @@ class EmailReader
 
         $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
 
-        if ($part->encoding == 4) {
+        if ($part->encoding == ENCQUOTEDPRINTABLE) {
             $data = quoted_printable_decode($data);
-        } elseif ($part->encoding == 3) {
+        } elseif ($part->encoding == ENCBASE64) {
             $data = base64_decode($data);
         }
 
@@ -270,8 +261,9 @@ class EmailReader
      * @param null $clearFlags
      * @param null $mailBox
      * @return bool|EmailReaderError
+     * @todo EmailReaderError is only returning the error code not the error message
      */
-    function editFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
+    function editMessageFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
         if (isset($mailBox)) {
             if (isset($setFlags) && isset($clearFlags) && !isEmpty($setFlags) && !isEmpty($clearFlags)) {
@@ -287,7 +279,7 @@ class EmailReader
                     } elseif ($editResult2) {
                         imap_setflag_full($mailBox, $sequence, $clearFlags);
                     }
-                    return $this->error2->getError();
+                    return new EmailReaderError("EMAIL_ERROR_EDIT_MESSAGE_FLAGS");
                 }
 
             } elseif (isset($setFlags) && !isEmpty($setFlags) && is_null($clearFlags)) {
@@ -297,7 +289,7 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return $this->error3->getError();
+                    return new EmailReaderError("EMAIL_ERROR_EDIT_MESSAGE_FLAGS");
                 }
 
             } elseif (isset($clearFlags) && !isEmpty($clearFlags) && is_null($setFlags)) {
@@ -307,14 +299,14 @@ class EmailReader
                 if ($editResult) {
                     return true;
                 } else {
-                    return $this->error4->getError();
+                    return new EmailReaderError("EMAIL_ERROR_EDIT_MESSAGE_FLAGS");
                 }
 
             } else {
-                return $this->error5->getError();
+                return new EmailReaderError("EMAIL_ERROR_EDIT_MESSAGE_FLAGS");
             }
         } else {
-            return $this->error1->getError();
+            return new EmailReaderError("EMAIL_ERROR_IMAP_STREAM");
         }
 
     }
@@ -333,24 +325,5 @@ class EmailReader
         } else {
             return false;
         }
-    }
-}
-
-/**
- * Class EmailReaderError
- * @package Utilities
- */
-class EmailReaderError
-{
-    public $code = false;
-    public $message = false;
-
-    function getError()
-    {
-        if ($this->code !== false && $this->message !== false) {
-            return "Error {$this->code}: {$this->message}";
-        }
-
-        return false;
     }
 }
