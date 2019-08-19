@@ -14,7 +14,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.", "test!23456789");
     }
 
     protected function _after()

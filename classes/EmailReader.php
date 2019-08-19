@@ -17,6 +17,8 @@ class EmailReader
     /**
      * @var EmailReaderError
      */
+
+    //
     private $error1;
     private $error2;
     private $error3;
@@ -64,14 +66,18 @@ class EmailReader
      */
     function openMailBox($folderName = null)
     {
-        $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
+        if (isset($folderName) && !empty($folderName)) {
+            $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
-        if (isset($this->mailBox)) {
+            if (isset($this->mailBox)) {
 
-            return $this->mailBox;
+                return $this->mailBox;
+            } else {
+
+                return $this->error1->getError();
+            }
         } else {
-
-            return $this->error1->getError();
+            return false;
         }
     }
 
@@ -81,7 +87,7 @@ class EmailReader
      */
     function getMailBoxFolders($mailBox = null)
     {
-        $folders = imap_listmailbox($mailBox, "{{$this->host}}", "*");
+        $folders = \imap_listmailbox($mailBox, "{{$this->host}}", "*");
 
         return $folders;
     }
