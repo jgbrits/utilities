@@ -10,9 +10,14 @@ namespace Utilities;
  */
 class EmailReaderError
 {
-    public $code = false;
-    public $message = false;
+    public $code = null;
+    public $message = null;
 
+    /**
+     * EmailReaderError constructor.
+     * @param $code
+     * @param $message
+     */
     function __construct($code, $message)
     {
         $this->code = $code;
@@ -36,15 +41,24 @@ class EmailReaderError
         define("EMAIL_ERROR_MESSAGE_DATA_MESSAGE", "Failed to get message data");
         define("EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE", "Failed to edit message flags");
 
+        define ("NO_ERROR", "No Error");
+
+    }
 
 
-        function getError()
-        {
-            if ($this->code !== false && $this->message !== false) {
-                return "Error {$this->code}: {$this->message}";
-            }
-
-            return false;
+    /**
+     * Get Error returns an object with the error code and message
+     * @return string
+     */
+    public function getError()
+    {
+        if ($this->code !== null && $this->message !== null) {
+            return (object)["errorCode" => $this->code, "errorMessage" => $this->message];
         }
+        else
+        {
+            return (object)["errorCode" => 0, "errorMessage" => NO_ERROR];;
+        }
+
     }
 }
