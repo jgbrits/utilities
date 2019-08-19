@@ -16,8 +16,11 @@ $mailBox = $emailReader->openMailBox("/notls");
 
 $folders = $emailReader->getMailBoxFolders($mailBox);
 
+$mailBoxFolder = $emailReader->openMailBoxFolder ($folders[3]);
 
-print_r ($folders);
+$headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
+
+$email = $emailReader->getMessageData(1298);
 //Open a connection to server
 //Get a list of folders from the server
 //Get a list of email headers from one of the folders - how do I know which folder ?

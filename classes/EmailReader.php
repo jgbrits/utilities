@@ -77,8 +77,13 @@ class EmailReader
     function getMailBoxFolders($mailBox = null)
     {
         $folders = imap_list($mailBox, "{{$this->host}}", "*");
+        $parsedFolders = [];
+        foreach ($folders as $id => $folder) {
+            $tempName = explode ("}", $folder); //Comes in the form {server}Folder
+            $parsedFolders[] = $tempName[1];
+        }
 
-        return $folders;
+        return $parsedFolders;
     }
 
     /**
@@ -89,7 +94,7 @@ class EmailReader
     function openMailBoxFolder($folderName = null)
     {
         if (isset($folderName) && !empty($folderName)) {
-            $mailBoxFolder = $this->openMailBox($folderName);
+            $mailBoxFolder = $this->openMailBox($this->flags, $folderName);
 
             return $mailBoxFolder;
         } else {
