@@ -12,7 +12,7 @@ require_once  "vendor/autoload.php";
 $emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.oxyros", "jct1969", 143);
 
 
-$mailBox = $emailReader->openMailBox();
+$mailBox = $emailReader->openMailBox("/notls");
 
 $folders = $emailReader->getMailBoxFolders($mailBox);
 
