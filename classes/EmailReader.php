@@ -13,6 +13,10 @@ class EmailReader
     private $flags = null;
     private $username = null;
     private $password = null;
+    private $htmlMessage = null;
+    private $plainMessage = null;
+    private $charset = null;
+    private $attachments = null;
     public $port = null;
 
     /**
@@ -84,7 +88,6 @@ class EmailReader
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
 
-            $errors = $this->handleErrors();
             $folders = imap_list($mailBox, "{{$this->host}}", "*");
             $parsedFolders = [];
             foreach ($folders as $id => $folder) {
@@ -263,12 +266,10 @@ class EmailReader
      * @param $part
      * @param $partNumber
      * @param null $mailBox
-     * @return object
+     * @return object|\Utilities\EmailReaderError
      */
     function addMessageDataToArray($messageNumber, $part, $partNumber, $mailBox = null)
     {
-        global $htmlMsg, $plainMsg, $charset, $attachments;
-
 
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
@@ -276,41 +277,39 @@ class EmailReader
 
                 $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
 
+
+                $params = [];
+                if ($part->parameters) {
+                    foreach ($part->parameters as $parameters) {
+                        $params[strtolower($parameters->attribute)] = $parameters->value;
+                    }
+                }
+                if ($part->ifdparameters == 1) {
+                    foreach ($part->dparameters as $dparameter) {
+                        $params[strtolower($dparameter->attribute)] = $dparameter->value;
+                    }
+
+                    if ($params["filename"] || $params["name"]) {
+
+                        $filename = ($params["filename"]) ? $params["filename"] : $params["name"];
+
+                        $this->attachments[] = (object)array("encoding" => $part->encoding, "fileName" => $filename, "data" => $data);
+
+                    }
+                }
+
                 if ($part->encoding == ENCQUOTEDPRINTABLE) {
                     $data = quoted_printable_decode($data);
                 } elseif ($part->encoding == ENCBASE64) {
                     $data = base64_decode($data);
                 }
 
-                $params = [];
-                if ($part->parameters) {
-                    foreach ($part->parameters as $x) {
-                        $params[strtolower($x->attribute)] = $x->value;
-                    }
-                }
-                if ($part->ifdparameters == 1) {
-                    foreach ($part->dparameters as $x) {
-                        $params[strtolower($x->attribute)] = $x->value;
-                    }
-
-                    if ($params['filename'] || $params['name']) {
-
-                        $filename = ($params['filename']) ? $params['filename'] : $params['name'];
-
-                        //@todo doesn't store data for PNG attachments - $attachments[] = array($filename => $data);
-                        //Temporarily stores only the file names with no data
-                        $attachments[] = $filename;
-
-                    }
-                }
-
-
                 if ($part->type == 0 && $data) {
-                    if (strtolower($part->subtype) == 'plain') {
-                        $plainMsg .= trim($data) . "\n\n";
+                    if (strtolower($part->subtype) == "plain") {
+                        $this->plainMessage .= trim($data) . "\n\n";
                     } else {
-                        $htmlMsg .= $data;
-                        $charset = $params['charset'];
+                        $this->htmlMessage .= $data;
+                        $this->charset = $params["charset"];
                     }
                 }
 
@@ -320,9 +319,7 @@ class EmailReader
                     }
                 }
 
-                $messageParts = (object)["htmlMessage" => $htmlMsg, "plainMessage" => $plainMsg, "charset" => $charset, "attachments" => $attachments];
-
-                return $messageParts;
+                return (object)["htmlMessage" => $this->htmlMessage, "plainMessage" => $this->plainMessage, "charset" => $this->charset, "attachments" => $this->attachments];
 
             } else {
                 return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
@@ -334,14 +331,47 @@ class EmailReader
     }
 
     /**
-     * $sequence contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
-     * @param $sequence
+     * Dumps the parsed message data's attachments to a directory location
+     * @param $messageData
+     * @param $directory
+     * @return bool|\Utilities\EmailReaderError
+     */
+    function dumpAttachments($messageData, $directory)
+    {
+        if (isset($messageData) && !empty($messageData)) {
+            if (isset($directory) && !empty($directory)) {
+                foreach ($messageData->attachments as $attachment) {
+                    $fp = fopen($directory . $attachment->fileName, "w+");
+
+                    if ($messageData->encoding == ENCQUOTEDPRINTABLE) {
+
+                        fwrite($fp, quoted_printable_decode($attachment->data));
+
+                    } elseif ($messageData->encoding == ENCBASE64) {
+
+                        fwrite($fp, base64_decode($attachment->data));
+
+                    }
+                    fclose($fp);
+                }
+                return true;
+            } else {
+                return new EmailReaderError (EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY, EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY_MESSAGE);
+            }
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_DUMP_ATTACHMENTS_DATA, EMAIL_ERROR_DUMP_ATTACHMENTS_DATA_MESSAGE);
+        }
+    }
+
+    /**
+     * Sets the message status by setting and clearing message flags
+     * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param null $setFlags
      * @param null $clearFlags
      * @param null $mailBox
      * @return bool|EmailReaderError
      */
-    function editMessageFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
+    function setMessageStatus($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
         $errors = $this->handleErrors();
         if (isset($mailBox)) {

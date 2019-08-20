@@ -116,7 +116,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testGetMessageData()
     {
-        $messageNumber = 7;
+        $messageNumber = 6;
 
         $messageData = $this->emailReader->getMessageData($messageNumber, $this->testOpenMailBoxFolder());
 
@@ -127,7 +127,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         return $messageData;
     }
 
-    public function testEditMessageFlags()
+    public function testSetMessageStatus()
     {
         //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
 
@@ -135,7 +135,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $setFlags = null;
         $clearFlags = null;
 
-        $newFlags = $this->emailReader->editMessageFlags($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
+        $newFlags = $this->emailReader->setMessageStatus($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
 
         $this->assertTrue($newFlags, "Returned was not TRUE, meaning it failed to set flags to the message");
 
@@ -165,6 +165,15 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
 
         $email = $emailReader->getMessageData(418, $mailBoxFolder);
+    }
+
+    public function testDumpAttachments()
+    {
+        $messageData = $this->testGetMessageData();
+
+        $directory = "C:\\Users\\justi\\Downloads\\";
+
+        $this->emailReader->dumpAttachments($messageData, $directory);
     }
 
 }

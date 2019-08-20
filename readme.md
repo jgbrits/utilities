@@ -23,7 +23,7 @@ $mailBox = $emailReader->openMailBox();
 $folders = $emailReader->getMailBoxFolders($mailBox);
 ```
 
-####Open the desired mailbox folder
+####Open the desired mailbox folder from the returned array
 ```
 $mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName[0]);
 ```
@@ -35,5 +35,14 @@ $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
 
 ###Read a selected message in the mailbox folder
 ```
-$email = $emailReader->getMessageData(418, $mailBoxFolder);
+$messageNumber = 418
+
+$email = $emailReader->getMessageData($messageNumber, $mailBoxFolder);
+```
+
+###Dump the attached files to a specified directory location
+```
+$directory = "C:\\Users\\user\\Downloads\\";
+
+$this->emailReader->dumpAttachments($email, $directory);
 ```
