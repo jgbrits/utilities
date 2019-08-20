@@ -370,6 +370,7 @@ class EmailReader
      * @param null $clearFlags
      * @param null $mailBox
      * @return bool|EmailReaderError
+     * @todo finish this
      */
     function setMessageStatus($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
