@@ -32,8 +32,8 @@ class EmailReader
 
     /**
      * Gets back a mail box handle for all future processing
-     * @param null $flags
-     * @param $folderName
+     * @param string $flags
+     * @param null $folderName
      * @return resource|\Utilities\EmailReaderError|null
      */
     function openMailBox( $flags= "/imap/ssl" ,$folderName = null)

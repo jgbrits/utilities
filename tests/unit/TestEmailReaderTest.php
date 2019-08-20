@@ -137,7 +137,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $newFlags = $this->emailReader->editMessageFlags($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
 
-        $this->assertTrue($newFlags, "Returned was FALSE, meaning it failed to set flags to the message");
+        $this->assertTrue($newFlags, "Returned was not TRUE, meaning it failed to set flags to the message");
 
         return $newFlags;
     }
@@ -149,6 +149,22 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $this->assertTrue($resultBoolean, "Returned FALSE, this means the close failed");
 
+    }
+
+    public function testExample()
+    {
+        $emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.oxyros", "jct1969", 143);
+
+
+        $mailBox = $emailReader->openMailBox("/notls");
+
+        $folders = $emailReader->getMailBoxFolders($mailBox);
+
+        $mailBoxFolder = $emailReader->openMailBoxFolder ($folders[3]);
+
+        $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
+
+        $email = $emailReader->getMessageData(4, $mailBox);
     }
 
 }

@@ -21,13 +21,12 @@ define("EMAIL_ERROR_MESSAGE_HEADER_MESSAGE", "Failed to get message header");
 define("EMAIL_ERROR_MESSAGE_DATA_MESSAGE", "Failed to get message data");
 define("EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE", "Failed to edit message flags");
 
-define ("NO_ERROR", "No Error");
+define("NO_ERROR", "No Error");
 
 
 /**
  * Class EmailReaderError
  * @package Utilities
- * @todo EmailReaderError is only returning the error code not the error message
  */
 class EmailReaderError
 {
@@ -43,8 +42,6 @@ class EmailReaderError
     {
         $this->code = $code;
         $this->message = $message;
-
-
     }
 
 
@@ -56,9 +53,7 @@ class EmailReaderError
     {
         if ($this->code !== null && $this->message !== null) {
             return (object)["errorCode" => $this->code, "errorMessage" => $this->message];
-        }
-        else
-        {
+        } else {
             return (object)["errorCode" => 0, "errorMessage" => NO_ERROR];;
         }
 
