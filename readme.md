@@ -15,7 +15,7 @@ vendor\bin\codecept run
 ```
 $emailReader = new \Utilities\EmailReader("host", "username", "password", "port number (optional: default is 993)");
 
-$mailBox = $emailReader->openMailBox();
+$mailBox = $emailReader->openMailBox("flags" (optional: default is "/imap/ssl"));
 ```
 
 ###Get an array of mailbox folders to choose from
