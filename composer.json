@@ -1,5 +1,17 @@
 {
-    "require-dev": {
-        "codeception/codeception": "^3.0"
+  "require-dev": {
+    "codeception/codeception": "^3.0"
+  },
+  "require": {
+    "ext-imap": "*"
+  },
+  "autoload": {
+    "classmap": [
+      "./classes/EmailReader.php",
+      "./classes/EmailReaderError.php"
+    ],
+    "psr-4": {
+      "Utilities\\": "classes/"
     }
+  }
 }
