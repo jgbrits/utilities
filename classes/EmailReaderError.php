@@ -38,16 +38,18 @@ class EmailReaderError
 {
     public $code = null;
     public $message = null;
+    public $imapErrors = null;
 
     /**
      * EmailReaderError constructor.
      * @param $code
      * @param $message
      */
-    function __construct($code, $message)
+    function __construct($code, $message,$imapErrors=null)
     {
         $this->code = $code;
         $this->message = $message;
+        $this->imapErrors = $imapErrors;
     }
 
 
@@ -58,9 +60,9 @@ class EmailReaderError
     public function getError()
     {
         if ($this->code !== null && $this->message !== null) {
-            return (object)["errorCode" => $this->code, "errorMessage" => $this->message];
+            return (object)["errorCode" => $this->code, "errorMessage" => $this->message, "imapErrors" => $this->imapErrors];
         } else {
-            return (object)["errorCode" => 0, "errorMessage" => NO_ERROR];;
+            return (object)["errorCode" => 0, "errorMessage" => NO_ERROR];
         }
 
     }

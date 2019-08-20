@@ -20,7 +20,9 @@ $mailBoxFolder = $emailReader->openMailBoxFolder ($folders[3]);
 
 $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
 
-$email = $emailReader->getMessageData(1298);
+$email = $emailReader->getMessageData(1298, $mailBoxFolder);
+
+print_r($email);
 //Open a connection to server
 //Get a list of folders from the server
 //Get a list of email headers from one of the folders - how do I know which folder ?

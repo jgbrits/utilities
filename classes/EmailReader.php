@@ -24,10 +24,22 @@ class EmailReader
      */
     function __construct($host, $username, $password, $port = 993)
     {
+
         $this->host = $host;
         $this->username = $username;
         $this->password = $password;
         $this->port = $port;
+    }
+
+    /**
+     * * Handles any IMAP errors or alerts
+     * @return array ["errors" => , "alerts" => ]
+     */
+    function handleErrors() {
+        $errors = imap_errors();
+        $alerts = imap_alerts();
+
+        return ["errors" => $errors, "alerts" => $alerts];
     }
 
     /**
@@ -43,14 +55,17 @@ class EmailReader
         }
         if (function_exists("imap_open")) {
 
+            $errors = $this->handleErrors();
             $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
             if (isset($this->mailBox)) {
                 return $this->mailBox;
             } else {
 
-                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
             }
+
+
         } else {
 
             return new EmailReaderError (EMAIL_ERROR_IMAP_ERROR, EMAIL_ERROR_IMAP_ERROR_MESSAGE);
@@ -65,7 +80,9 @@ class EmailReader
      */
     function getMailBoxFolders($mailBox = null)
     {
+        $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
+
             $folders = imap_list($mailBox, "{{$this->host}}", "*");
             $parsedFolders = [];
             foreach ($folders as $id => $folder) {
@@ -73,9 +90,10 @@ class EmailReader
                 $parsedFolders[] = $tempName[1];
             }
 
+
             return $parsedFolders;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
         }
     }
 
@@ -86,12 +104,13 @@ class EmailReader
      */
     function openMailBoxFolder($folderName = null)
     {
+        $errors = $this->handleErrors();
         if (isset($folderName) && !empty($folderName)) {
             $mailBoxFolder = $this->openMailBox($this->flags, $folderName);
 
             return $mailBoxFolder;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER, EMAIL_ERROR_MAILBOX_FOLDER_MESSAGE);
+            return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER, EMAIL_ERROR_MAILBOX_FOLDER_MESSAGE, $errors);
         }
     }
 
@@ -103,12 +122,13 @@ class EmailReader
      */
     function search($searchCriteria, $mailBox = null)
     {
+        $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
             $searchResult = imap_search($mailBox, $searchCriteria);
 
             return $searchResult;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
         }
     }
 
@@ -141,12 +161,13 @@ class EmailReader
      */
     function getMailBoxHeaders($mailBox = null)
     {
+        $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
             $mailBoxHeaders = imap_headers($mailBox);
 
             return $mailBoxHeaders;
         } else {
-            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
         }
     }
 
@@ -203,6 +224,7 @@ class EmailReader
      */
     function getMessageData($messageNumber, $mailBox = null)
     {
+        $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
             if (isset($mailBox) && !empty($mailBox)) {
                 $emailMessage = (object)[];
@@ -220,11 +242,11 @@ class EmailReader
                 return $emailMessage;
 
             } else {
-                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
 
             }
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE);
+            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE, $errors);
         }
     }
 
@@ -239,6 +261,7 @@ class EmailReader
     function addMessageDataToArray($messageNumber, $part, $partNumber, $mailBox = null)
     {
         global $htmlMsg, $plainMsg, $charset, $attachments;
+
 
         $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
 
