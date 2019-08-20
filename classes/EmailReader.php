@@ -36,7 +36,7 @@ class EmailReader
      * @param null $folderName
      * @return resource|\Utilities\EmailReaderError|null
      */
-    function openMailBox( $flags= "/imap/ssl" ,$folderName = null)
+    function openMailBox($flags = "/imap/ssl", $folderName = null)
     {
         if (!empty($flags)) {
             $this->flags = $flags;
@@ -65,14 +65,18 @@ class EmailReader
      */
     function getMailBoxFolders($mailBox = null)
     {
-        $folders = imap_list($mailBox, "{{$this->host}}", "*");
-        $parsedFolders = [];
-        foreach ($folders as $id => $folder) {
-            $tempName = explode ("}", $folder); //Comes in the form {server}Folder
-            $parsedFolders[] = $tempName[1];
-        }
+        if (isset($mailBox) && !empty($mailBox)) {
+            $folders = imap_list($mailBox, "{{$this->host}}", "*");
+            $parsedFolders = [];
+            foreach ($folders as $id => $folder) {
+                $tempName = explode("}", $folder); //Comes in the form {server}Folder
+                $parsedFolders[] = $tempName[1];
+            }
 
-        return $parsedFolders;
+            return $parsedFolders;
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+        }
     }
 
     /**
@@ -95,60 +99,78 @@ class EmailReader
      * Gets the message numbers of all messages that contain the parsed criteria
      * @param $searchCriteria
      * @param null $mailBox
-     * @return array
+     * @return array|\Utilities\EmailReaderError
      */
     function search($searchCriteria, $mailBox = null)
     {
-        $searchResult = imap_search($mailBox, $searchCriteria);
+        if (isset($mailBox) && !empty($mailBox)) {
+            $searchResult = imap_search($mailBox, $searchCriteria);
 
-        return $searchResult;
+            return $searchResult;
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+        }
     }
 
     /**
      * Uses the message numbers to get and put all the message headers into an array
      * @param $searchResult
      * @param null $mailBox
-     * @return array
+     * @return array|\Utilities\EmailReaderError
      */
     function getSearchResultHeaders($searchResult, $mailBox = null)
     {
-        $searchResultHeaders = array();
+        if (isset($mailBox) && !empty($mailBox)) {
+            $searchResultHeaders = array();
 
-        foreach ($searchResult as $messageNumber) {
-            $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
+            foreach ($searchResult as $messageNumber) {
+                $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
+            }
+
+            return $searchResultHeaders;
+
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
         }
-
-        return $searchResultHeaders;
     }
 
     /**
      * Gets all the headers in the mailbox folder
      * @param null $mailBox
-     * @return array
+     * @return array|\Utilities\EmailReaderError
      */
     function getMailBoxHeaders($mailBox = null)
     {
-        $mailBoxHeaders = imap_headers($mailBox);
+        if (isset($mailBox) && !empty($mailBox)) {
+            $mailBoxHeaders = imap_headers($mailBox);
 
-        return $mailBoxHeaders;
+            return $mailBoxHeaders;
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+        }
     }
 
     /**
      * Gets all the message numbers from the parsed search headers
      * @param $searchHeaders
-     * @return array
+     * @return array|\Utilities\EmailReaderError
      */
     function getMessageNumbersForSearch($searchHeaders)
     {
-        $objectToArray = [];
+        if (isset($searchHeaders) && !empty($searchHeaders)) {
+            $objectToArray = [];
 
-        foreach ($searchHeaders as $object) {
-            $objectToArray[] = get_object_vars($object);
+            foreach ($searchHeaders as $object) {
+                $objectToArray[] = get_object_vars($object);
+            }
+
+            $messageNumbersFromObject = array_column($objectToArray, "Msgno");
+
+            return $messageNumbersFromObject;
+
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS, EMAIL_ERROR_SEARCH_HEADERS_MESSAGE);
         }
-
-        $messageNumbersFromObject = array_column($objectToArray, "Msgno");
-
-        return $messageNumbersFromObject;
     }
 
     /**
@@ -159,9 +181,18 @@ class EmailReader
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
-        $messageHeader = imap_header($mailBox, $messageNumber);
+        if (isset($messageNumber) && !empty($messageNumber)) {
+            if (isset($mailBox) && !empty($mailBox)) {
+                $messageHeader = imap_header($mailBox, $messageNumber);
 
-        return $messageHeader;
+                return $messageHeader;
+            } else {
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+
+            }
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE);
+        }
     }
 
     /**
@@ -172,19 +203,29 @@ class EmailReader
      */
     function getMessageData($messageNumber, $mailBox = null)
     {
-        $emailMessage = (object)[];
+        if (isset($messageNumber) && !empty($messageNumber)) {
+            if (isset($mailBox) && !empty($mailBox)) {
+                $emailMessage = (object)[];
 
-        $structure = imap_fetchstructure($mailBox, $messageNumber);
+                $structure = imap_fetchstructure($mailBox, $messageNumber);
 
-        if (!$structure->parts) {
-            $emailMessage = $this->addMessageDataToArray($messageNumber, $structure, 0, $mailBox);
-        } else {
-            foreach ($structure->parts as $partNumber0 => $p) {
-                $emailMessage = $this->addMessageDataToArray($messageNumber, $p, $partNumber0 + 1, $mailBox);
+                if (!$structure->parts) {
+                    $emailMessage = $this->addMessageDataToArray($messageNumber, $structure, 0, $mailBox);
+                } else {
+                    foreach ($structure->parts as $partNumber0 => $p) {
+                        $emailMessage = $this->addMessageDataToArray($messageNumber, $p, $partNumber0 + 1, $mailBox);
+                    }
+                }
+
+                return $emailMessage;
+
+            } else {
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
+
             }
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE);
         }
-
-        return $emailMessage;
     }
 
     /**

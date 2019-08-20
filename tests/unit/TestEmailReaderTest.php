@@ -43,7 +43,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     public function testOpenMailBoxFolder()
     {
         $folderName = "INBOX";
-
+        $mailBox = $this->emailReader->openMailBox();
         $mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
 
         $this->assertNotEmpty($mailBoxFolder, "Inbox is empty");
@@ -164,7 +164,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
 
-        $email = $emailReader->getMessageData(4, $mailBox);
+        $email = $emailReader->getMessageData(418, $mailBox);
     }
 
 }
