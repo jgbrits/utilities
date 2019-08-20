@@ -173,7 +173,9 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $directory = "C:\\Users\\justi\\Downloads\\";
 
-        $this->emailReader->dumpAttachments($messageData, $directory);
+        $dumpAttachmentsResult = $this->emailReader->dumpAttachments($messageData, $directory);
+
+        $this->assertTrue($dumpAttachmentsResult);
     }
 
 }
