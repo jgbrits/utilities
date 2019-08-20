@@ -35,7 +35,8 @@ class EmailReader
      * * Handles any IMAP errors or alerts
      * @return array ["errors" => , "alerts" => ]
      */
-    function handleErrors() {
+    function handleErrors()
+    {
         $errors = imap_errors();
         $alerts = imap_alerts();
 
@@ -83,6 +84,7 @@ class EmailReader
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
 
+            $errors = $this->handleErrors();
             $folders = imap_list($mailBox, "{{$this->host}}", "*");
             $parsedFolders = [];
             foreach ($folders as $id => $folder) {
@@ -124,6 +126,7 @@ class EmailReader
     {
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
+            $errors = $this->handleErrors();
             $searchResult = imap_search($mailBox, $searchCriteria);
 
             return $searchResult;
@@ -144,6 +147,7 @@ class EmailReader
             $searchResultHeaders = array();
 
             foreach ($searchResult as $messageNumber) {
+                $errors = $this->handleErrors();
                 $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
             }
 
@@ -163,6 +167,7 @@ class EmailReader
     {
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
+            $errors = $this->handleErrors();
             $mailBoxHeaders = imap_headers($mailBox);
 
             return $mailBoxHeaders;
@@ -204,6 +209,7 @@ class EmailReader
     {
         if (isset($messageNumber) && !empty($messageNumber)) {
             if (isset($mailBox) && !empty($mailBox)) {
+                $errors = $this->handleErrors();
                 $messageHeader = imap_header($mailBox, $messageNumber);
 
                 return $messageHeader;
@@ -229,6 +235,7 @@ class EmailReader
             if (isset($mailBox) && !empty($mailBox)) {
                 $emailMessage = (object)[];
 
+                $errors = $this->handleErrors();
                 $structure = imap_fetchstructure($mailBox, $messageNumber);
 
                 if (!$structure->parts) {
@@ -263,6 +270,7 @@ class EmailReader
         global $htmlMsg, $plainMsg, $charset, $attachments;
 
 
+        $errors = $this->handleErrors();
         $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
 
         if ($part->encoding == ENCQUOTEDPRINTABLE) {
@@ -327,15 +335,19 @@ class EmailReader
         if (isset($mailBox)) {
             if (isset($setFlags) && isset($clearFlags) && !isEmpty($setFlags) && !isEmpty($clearFlags)) {
 
+                $errors = $this->handleErrors();
                 $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
+                $errors = $this->handleErrors();
                 $editResult2 = imap_clearflag_full($mailBox, $sequence, $clearFlags);
 
                 if ($editResult && $editResult2) {
                     return true;
                 } else {
                     if ($editResult) {
+                        $errors = $this->handleErrors();
                         imap_clearflag_full($mailBox, $sequence, $setFlags);
                     } elseif ($editResult2) {
+                        $errors = $this->handleErrors();
                         imap_setflag_full($mailBox, $sequence, $clearFlags);
                     }
                     return new EmailReaderError(EMAIL_ERROR_EDIT_MESSAGE_FLAGS, EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE);
@@ -343,6 +355,7 @@ class EmailReader
 
             } elseif (isset($setFlags) && !isEmpty($setFlags) && is_null($clearFlags)) {
 
+                $errors = $this->handleErrors();
                 $editResult = imap_setflag_full($mailBox, $sequence, $setFlags);
 
                 if ($editResult) {
@@ -353,6 +366,7 @@ class EmailReader
 
             } elseif (isset($clearFlags) && !isEmpty($clearFlags) && is_null($setFlags)) {
 
+                $errors = $this->handleErrors();
                 $editResult = imap_clearflag_full($mailBox, $sequence, $clearFlags);
 
                 if ($editResult) {
@@ -378,6 +392,7 @@ class EmailReader
     function close($mailBox = null)
     {
         if (isset($mailBox)) {
+            $errors = $this->handleErrors();
             $closeResult = imap_close($mailBox);
 
             if ($closeResult) {

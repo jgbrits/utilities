@@ -160,11 +160,11 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $folders = $emailReader->getMailBoxFolders($mailBox);
 
-        $mailBoxFolder = $emailReader->openMailBoxFolder ($folders[3]);
+        $mailBoxFolder = $emailReader->openMailBoxFolder($folders[3]);
 
         $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
 
-        $email = $emailReader->getMessageData(418, $mailBox);
+        $email = $emailReader->getMessageData(418, $mailBoxFolder);
     }
 
 }

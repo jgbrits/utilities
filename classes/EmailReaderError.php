@@ -44,8 +44,9 @@ class EmailReaderError
      * EmailReaderError constructor.
      * @param $code
      * @param $message
+     * @param null $imapErrors
      */
-    function __construct($code, $message,$imapErrors=null)
+    function __construct($code, $message, $imapErrors = null)
     {
         $this->code = $code;
         $this->message = $message;

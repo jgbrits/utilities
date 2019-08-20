@@ -25,7 +25,15 @@ $folders = $emailReader->getMailBoxFolders($mailBox);
 
 ####Open the desired mailbox folder
 ```
-$folderName = "INBOX";
+$mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName[0]);
+```
 
-$mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
+####Get the headers of all the messages in the selected mailbox folder
+```
+$headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
+```
+
+###Read a selected message in the mailbox folder
+```
+$email = $emailReader->getMessageData(418, $mailBoxFolder);
 ```
