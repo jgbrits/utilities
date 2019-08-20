@@ -61,7 +61,7 @@ class EmailReader
     /**
      * Gets a list of mailbox folders
      * @param null $mailBox
-     * @return array
+     * @return array|\Utilities\EmailReaderError
      */
     function getMailBoxFolders($mailBox = null)
     {
@@ -298,7 +298,6 @@ class EmailReader
      * @param null $clearFlags
      * @param null $mailBox
      * @return bool|EmailReaderError
-     * @todo EmailReaderError is only returning the error code not the error message
      */
     function editMessageFlags($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
@@ -351,16 +350,20 @@ class EmailReader
     /**
      * Closes the mailbox stream
      * @param null $mailBox
-     * @return bool
+     * @return bool|\Utilities\EmailReaderError
      */
     function close($mailBox = null)
     {
-        $closeResult = imap_close($mailBox);
+        if (isset($mailBox)) {
+            $closeResult = imap_close($mailBox);
 
-        if ($closeResult) {
-            return $closeResult;
+            if ($closeResult) {
+                return $closeResult;
+            } else {
+                return new EmailReaderError(EMAIL_ERROR_IMAP_CLOSE_FAILURE, EMAIL_ERROR_IMAP_CLOSE_FAILURE_MESSAGE);
+            }
         } else {
-            return false;
+            return new EmailReaderError(EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE);
         }
     }
 }
