@@ -106,9 +106,9 @@ class EmailReader
     {
         $errors = $this->handleErrors();
         if (isset($folderName) && !empty($folderName)) {
-            $mailBoxFolder = $this->openMailBox($this->flags, $folderName);
+            $this->mailBox = $this->openMailBox($this->flags, $folderName);
 
-            return $mailBoxFolder;
+            return $this->mailBox;
         } else {
             return new EmailReaderError (EMAIL_ERROR_MAILBOX_FOLDER, EMAIL_ERROR_MAILBOX_FOLDER_MESSAGE, $errors);
         }
@@ -122,6 +122,9 @@ class EmailReader
      */
     function search($searchCriteria, $mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
             $searchResult = imap_search($mailBox, $searchCriteria);
