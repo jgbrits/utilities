@@ -147,6 +147,9 @@ class EmailReader
      */
     function getSearchResultHeaders($searchResult, $mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
             $searchResultHeaders = array();
@@ -170,6 +173,9 @@ class EmailReader
      */
     function getMailBoxHeaders($mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($mailBox) && !empty($mailBox)) {
 
@@ -212,6 +218,9 @@ class EmailReader
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
             if (isset($mailBox) && !empty($mailBox)) {
@@ -236,6 +245,9 @@ class EmailReader
      */
     function getMessageData($messageNumber, $mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
             if (isset($mailBox) && !empty($mailBox)) {
@@ -272,7 +284,9 @@ class EmailReader
      */
     function addMessageDataToArray($messageNumber, $part, $partNumber, $mailBox = null)
     {
-
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
             if (isset($mailBox) && !empty($mailBox)) {
@@ -379,6 +393,9 @@ class EmailReader
      */
     function setMessageStatus($sequence, $newMessageStatus, $mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($sequence) && !isEmpty($sequence)) {
             if (isset($newMessageStatus) && !isEmpty($newMessageStatus)) {
@@ -460,6 +477,9 @@ class EmailReader
      */
     function close($mailBox = null)
     {
+        if (empty($mailBox) && !empty($this->mailBox)) {
+            $mailBox = $this->mailBox;
+        }
         $errors = $this->handleErrors();
         if (isset($mailBox)) {
             $closeResult = imap_close($mailBox);

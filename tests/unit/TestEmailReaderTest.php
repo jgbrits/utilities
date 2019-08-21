@@ -175,10 +175,12 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $dumpAttachmentsResult = $this->emailReader->dumpAttachments($messageData, $directory);
 
+
         $this->assertTrue($dumpAttachmentsResult);
     }
 
-    public function testMessageDelete(){
+    public function testMessageDelete()
+    {
 
     }
 
