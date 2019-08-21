@@ -95,7 +95,6 @@ class EmailReader
                 $parsedFolders[] = $tempName[1];
             }
 
-
             return $parsedFolders;
         } else {
             return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
@@ -343,21 +342,26 @@ class EmailReader
     {
         if (isset($messageData) && !empty($messageData)) {
             if (isset($directory) && !empty($directory)) {
-                foreach ($messageData->attachments as $attachment) {
-                    $fp = fopen($directory . $attachment->fileName, "w+");
+                if (isset($messageData->attachments) && !isEmpty($messageData->attachments)) {
 
-                    if ($messageData->encoding == ENCQUOTEDPRINTABLE) {
+                    foreach ($messageData->attachments as $attachment) {
+                        $fp = fopen($directory . $attachment->fileName, "w+");
 
-                        fwrite($fp, quoted_printable_decode($attachment->data));
+                        if ($messageData->encoding == ENCQUOTEDPRINTABLE) {
 
-                    } elseif ($messageData->encoding == ENCBASE64) {
+                            fwrite($fp, quoted_printable_decode($attachment->data));
 
-                        fwrite($fp, base64_decode($attachment->data));
+                        } elseif ($messageData->encoding == ENCBASE64) {
 
+                            fwrite($fp, base64_decode($attachment->data));
+
+                        }
+                        fclose($fp);
                     }
-                    fclose($fp);
+                    return true;
+                } else {
+                    return new EmailReaderError (EMAIL_ERROR_DUMP_ATTACHMENTS_NOT_EXIST, EMAIL_ERROR_DUMP_ATTACHMENTS_NOT_EXIST_MESSAGE);
                 }
-                return true;
             } else {
                 return new EmailReaderError (EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY, EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY_MESSAGE);
             }
@@ -369,12 +373,39 @@ class EmailReader
     /**
      * Sets the message status by setting and clearing message flags
      * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param $newMessageStatus
+     * @param null $mailBox
+     * @return bool|\Utilities\EmailReaderError
+     */
+    function setMessageStatus($sequence, $newMessageStatus, $mailBox = null)
+    {
+        $errors = $this->handleErrors();
+        if (isset($sequence) && !isEmpty($sequence)) {
+            if (isset($newMessageStatus) && !isEmpty($newMessageStatus)) {
+                if (isset($mailBox) && !empty($mailBox)) {
+
+
+                    return true;
+                } else {
+                    return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
+                }
+            } else {
+                return new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_NEW_MESSAGE_STATUS, EMAIL_ERROR_EDIT_MESSAGE_STATUS_NEW_MESSAGE_STATUS_MESSAGE, $errors);
+            }
+        } else {
+            return new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE, EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE, $errors);
+        }
+    }
+
+    /*
+     * Sets the message status by setting and clearing message flags
+     * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param null $setFlags
      * @param null $clearFlags
      * @param null $mailBox
      * @return bool|EmailReaderError
      * @todo finish this
-     */
+     *
     function setMessageStatus($sequence, $setFlags = null, $clearFlags = null, $mailBox = null)
     {
         $errors = $this->handleErrors();
@@ -421,7 +452,7 @@ class EmailReader
         }
 
     }
-
+*/
     /**
      * Closes the mailbox stream
      * @param null $mailBox
