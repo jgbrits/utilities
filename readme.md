@@ -13,6 +13,12 @@ vendor\bin\codecept run
 ```
 
 ### Run Documentation
+
+**Important:** Before running the documentation you need to have installed graphviz and have it on your path -
+https://graphviz.gitlab.io/about/
+
+For more information about documenting your code - https://phpdoc.org
+
 ```
 vendor/bin/phpdoc -d classes/ -t documentation/
 ```

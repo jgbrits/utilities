@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">19</span>
+                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">17</span>
                                 </a>
                             </li>
                             <li>
@@ -144,19 +144,19 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-1308770464"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-968772600"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-1308770464" class="accordion-body collapse in">
+            <div id="namespace-968772600" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-983306084"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-143489056"></a>
                                 <a href="../namespaces/Utilities.html" style="margin-left: 30px; padding-left: 0">Utilities</a>
             </div>
-            <div id="namespace-983306084" class="accordion-body collapse ">
+            <div id="namespace-143489056" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -189,7 +189,7 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\Utilities</small>EmailReader</h1>
-                    <p><em></em></p>
+                    <p><em>Class EmailReader</em></p>
                     
                     
                                         
@@ -270,7 +270,9 @@
                         <dt>File</dt>
                             <dd><a href="../files/EmailReader.html"><div class="path-wrapper">EmailReader.php</div></a></dd>
                                                 <dt>Package</dt>
-                            <dd><div class="namespace-wrapper">Default</div></dd>
+                            <dd><div class="namespace-wrapper">Utilities
+
+Why have an email reader class ?</div></dd>
                                                 <dt>Class hierarchy</dt>
                             <dd class="hierarchy">
                                                                                                                                                                     <div class="namespace-wrapper">\Utilities\EmailReader</div>
@@ -326,13 +328,13 @@
             <a id="property_mailBox" name="property_mailBox" class="anchor"></a>
             <article class="property">
                 <h3 class="private ">$mailBox</h3>
-                <pre class="signature">$mailBox : </pre>
+                <pre class="signature">$mailBox : \Utilities\IMAPStream</pre>
                 <p><em></em></p>
                 
 
                                 <h4>Type</h4>
-                
-                                            </article>
+                \Utilities\IMAPStream
+                &mdash; Keeps a handle to a mailbox                            </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -350,13 +352,13 @@
             <a id="property_host" name="property_host" class="anchor"></a>
             <article class="property">
                 <h3 class="private ">$host</h3>
-                <pre class="signature">$host : </pre>
+                <pre class="signature">$host : String</pre>
                 <p><em></em></p>
                 
 
                                 <h4>Type</h4>
-                
-                                            </article>
+                String
+                &mdash; The hostname or address of the email server                            </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -374,13 +376,15 @@
             <a id="property_flags" name="property_flags" class="anchor"></a>
             <article class="property">
                 <h3 class="private ">$flags</h3>
-                <pre class="signature">$flags : </pre>
+                <pre class="signature">$flags : String</pre>
                 <p><em></em></p>
                 
 
                                 <h4>Type</h4>
-                
-                                            </article>
+                String
+                &mdash; Flags passed for specific mail box
+
+Link to optional flags: [https://www.php.net/manual/en/function.imap-open.php]                            </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -550,31 +554,31 @@
             <article class="method">
                 <h3 class="public ">__construct()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">__construct(  <span class="argument">$host</span>,   <span class="argument">$username</span>,   <span class="argument">$password</span>,   <span class="argument">$port = 993</span>) </pre>
+                <pre class="signature" style="margin-right: 54px;">__construct(String  <span class="argument">$host</span>, String  <span class="argument">$username</span>, String  <span class="argument">$password</span>, Integer  <span class="argument">$port = 993</span>) </pre>
                 <p><em>EmailMessage reader is used to read emails from an email server.</em></p>
                 <p>.</p>
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>String</td>
                                 <td>$host </td>
-                                <td></td>
+                                <td><p>Hostname of the email server</p></td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>String</td>
                                 <td>$username </td>
-                                <td></td>
+                                <td><p>Username</p></td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>String</td>
                                 <td>$password </td>
-                                <td></td>
+                                <td><p>Password, don't commit your passwords into your code repo</p></td>
                             </tr>
                                                     <tr>
-                                <td></td>
+                                <td>Integer</td>
                                 <td>$port </td>
-                                <td></td>
+                                <td><p>Port to connect to</p></td>
                             </tr>
                                             </table>
                 
@@ -1197,7 +1201,7 @@
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on August 21st, 2019 at 07:39.
+                    on August 21st, 2019 at 07:51.
                 </section>
             </section>
         </section>

@@ -5,11 +5,29 @@ namespace Utilities;
 
 use Utilities\EmailReaderError;
 
+/**
+ * Class EmailReader
+ * @package Utilities
+ *
+ * Why have an email reader class ?
+ *
+ */
 class EmailReader
 {
+    /**
+     * @var IMAPStream Keeps a handle to a mailbox
+     */
     private $mailBox = null;
+    /**
+     * @var String The hostname or address of the email server
+     */
     private $host = null;
-    //Link to optional flags: https://www.php.net/manual/en/function.imap-open.php
+
+    /**
+     * @var String Flags passed for specific mail box
+     *
+     * Link to optional flags: [https://www.php.net/manual/en/function.imap-open.php]
+     */
     private $flags = null;
     private $username = null;
     private $password = null;
@@ -21,10 +39,10 @@ class EmailReader
 
     /**
      * EmailMessage reader is used to read emails from an email server..
-     * @param $host
-     * @param $port
-     * @param $username
-     * @param $password
+     * @param String $host Hostname of the email server
+     * @param Integer $port Port to connect to
+     * @param String $username Username
+     * @param String $password Password, don't commit your passwords into your code repo
      */
     function __construct($host, $username, $password, $port = 993)
     {
