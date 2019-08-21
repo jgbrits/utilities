@@ -1,8 +1,10 @@
 <?php
 
-
 namespace Utilities;
 
+/**
+ * Defining constants for error codes
+ */
 define("EMAIL_ERROR_IMAP_ERROR", "80001");
 define("EMAIL_ERROR_IMAP_STREAM", "80002");
 define("EMAIL_ERROR_IMAP_LIST", "80003");
@@ -20,7 +22,17 @@ define("EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY", "80014");
 define("EMAIL_ERROR_DUMP_ATTACHMENTS_NOT_EXIST", "80015");
 define("EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE", "80016");
 define("EMAIL_ERROR_EDIT_MESSAGE_STATUS_NEW_MESSAGE_STATUS", "80017");
+define("EMAIL_ERROR_EDIT_MESSAGE_SET_FLAG", "80018");
+define("EMAIL_ERROR_EDIT_MESSAGE_CLEAR_FLAG", "80019");
+define("EMAIL_ERROR_DELETE_MESSAGE", "80020");
+define("EMAIL_ERROR_DESTINATION_FOLDER","80021");
+define("EMAIL_ERROR_MESSAGE_MOVE","80022");
+define("EMAIL_ERROR_SEARCH_FAIL","80023");
+define("EMAIL_ERROR_SEARCH_HEADERS_FAIL","80024");
 
+/**
+ * Defining constants for error messages
+ */
 define("EMAIL_ERROR_IMAP_ERROR_MESSAGE", "Imap is not installed");
 define("EMAIL_ERROR_IMAP_STREAM_MESSAGE", "Failed to open imap stream");
 define("EMAIL_ERROR_IMAP_LIST_MESSAGE", "Failed to get a list of mailbox folders");
@@ -38,25 +50,41 @@ define("EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY_MESSAGE", "No parsed directory");
 define("EMAIL_ERROR_DUMP_ATTACHMENTS_NOT_EXIST_MESSAGE", "No attachments found for parsed message data");
 define("EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE", "No valid sequence number(s) parsed");
 define("EMAIL_ERROR_EDIT_MESSAGE_STATUS_NEW_MESSAGE_STATUS_MESSAGE", "No valid new message statuses parsed");
+define("EMAIL_ERROR_EDIT_MESSAGE_SET_FLAG_MESSAGE", "Failed to set flags");
+define("EMAIL_ERROR_EDIT_MESSAGE_CLEAR_FLAG_MESSAGE", "Failed to clear flags");
+define("EMAIL_ERROR_DELETE_MESSAGE_MESSAGE", "Failed to delete message");
+define("EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE","No valid message folder parsed");
+define("EMAIL_ERROR_MESSAGE_MOVE_MESSAGE","Failed to move message");
+define("EMAIL_ERROR_SEARCH_FAIL_MESSAGE","Failed to find messages of parsed search criteria");
+define("EMAIL_ERROR_SEARCH_HEADERS_FAIL_MESSAGE","No headers found from parsed searched message number(s)");
 
 define("EMAIL_ERROR_NO_ERROR", "No Error");
 
 
 /**
- * Class EmailReaderError
+ * Class EmailReaderError This is an error class for EmailReader
  * @package Utilities
  */
 class EmailReaderError
 {
+    /**
+     * @var String $code Defined error code constant
+     */
     public $code = null;
+    /**
+     * @var String $message Defined error message constant
+     */
     public $message = null;
+    /**
+     * @var null $imapErrors Contains Imap errors
+     */
     public $imapErrors = null;
 
     /**
      * EmailReaderError constructor.
-     * @param $code
-     * @param $message
-     * @param null $imapErrors
+     * @param String $code Defined error code constant
+     * @param String $message Defined error message constant
+     * @param null $imapErrors Contains Imap errors
      */
     function __construct($code, $message, $imapErrors = null)
     {
@@ -75,7 +103,7 @@ class EmailReaderError
         if ($this->code !== null && $this->message !== null) {
             return (object)["errorCode" => $this->code, "errorMessage" => $this->message, "imapErrors" => $this->imapErrors];
         } else {
-            return (object)["errorCode" => 0, "errorMessage" => NO_ERROR];
+            return (object)["errorCode" => 0, "errorMessage" => EMAIL_ERROR_NO_ERROR];
         }
 
     }

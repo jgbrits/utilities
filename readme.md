@@ -21,6 +21,9 @@ For more information about documenting your code - https://phpdoc.org
 
 ```
 vendor/bin/phpdoc -d classes/ -t documentation/
+
+For windows:
+vendor\bin\phpdoc -d classes\ -t documentation\
 ```
 
 ##How to use code

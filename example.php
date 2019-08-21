@@ -16,11 +16,11 @@ $mailBox = $emailReader->openMailBox("/notls");
 
 $folders = $emailReader->getMailBoxFolders($mailBox);
 
-$mailBoxFolder = $emailReader->openMailBoxFolder ($folders[3]);
+$mailBoxFolder = $emailReader->openMailBoxFolder($folders[3]);
 
-$headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
+$headers = $emailReader->getMailBoxHeaders();
 
-$email = $emailReader->getMessageData(1298, $mailBoxFolder);
+$email = $emailReader->getMessageData(418);
 
 print_r($email);
 //Open a connection to server
