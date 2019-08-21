@@ -132,10 +132,21 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
 
         $messageNumberSequence = null;
-        $setFlags = null;
-        $clearFlags = null;
 
-        $newFlags = $this->emailReader->setMessageStatus($messageNumberSequence, $setFlags, $clearFlags, $this->testOpenMailBoxFolder());
+        $newFlags = $this->emailReader->setMessageStatus($messageNumberSequence, EMAIL_SEEN, $this->testOpenMailBoxFolder());
+
+        $this->assertTrue($newFlags, "Returned was not TRUE, meaning it failed to set flags to the message");
+
+        return $newFlags;
+    }
+
+    public function testClearMessageStatus()
+    {
+        //Flags: https://www.php.net/manual/en/function.imap-setflag-full.php
+
+        $messageNumberSequence = null;
+
+        $newFlags = $this->emailReader->clearMessageStatus($messageNumberSequence, EMAIL_SEEN, $this->testOpenMailBoxFolder());
 
         $this->assertTrue($newFlags, "Returned was not TRUE, meaning it failed to set flags to the message");
 
@@ -151,22 +162,6 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     }
 
-    public function testExample()
-    {
-        $emailReader = new \Utilities\EmailReader("oxyros.co.za", "glocell.oxyros", "jct1969", 143);
-
-
-        $mailBox = $emailReader->openMailBox("/notls");
-
-        $folders = $emailReader->getMailBoxFolders($mailBox);
-
-        $mailBoxFolder = $emailReader->openMailBoxFolder($folders[3]);
-
-        $headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
-
-        $email = $emailReader->getMessageData(418, $mailBoxFolder);
-    }
-
     public function testDumpAttachments()
     {
         $messageData = $this->testGetMessageData();
@@ -176,6 +171,33 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $dumpAttachmentsResult = $this->emailReader->dumpAttachments($messageData, $directory);
 
         $this->assertTrue($dumpAttachmentsResult);
+    }
+
+    public function testMessageMove()
+    {
+        $sequence = null;
+        $destination = null;
+        $messageMoveResult = $this->emailReader->messageMove($sequence, $destination, $this->testOpenMailBoxFolder());
+
+        $this->assertTrue($messageMoveResult);
+    }
+
+    public function testMessageCopy()
+    {
+        $sequence = null;
+        $destination = null;
+        $messageCopyResult = $this->emailReader->messageCopy($sequence, $destination, $this->testOpenMailBoxFolder());
+
+        $this->assertTrue($messageCopyResult);
+    }
+
+    public function testMessageDelete()
+    {
+        $messageNumber = null;
+
+        $messageDeleteResult = $this->emailReader->messageDelete($messageNumber, $this->testOpenMailBoxFolder());
+
+        $this->assertTrue($messageDeleteResult);
     }
 
 }
