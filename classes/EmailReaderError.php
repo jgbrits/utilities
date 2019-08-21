@@ -14,6 +14,9 @@ define("EMAIL_ERROR_EDIT_MESSAGE_FLAGS", "8");
 define("EMAIL_ERROR_SEARCH_HEADERS", "9");
 define("EMAIL_ERROR_MESSAGE_NUMBER", "10");
 define("EMAIL_ERROR_IMAP_CLOSE_FAILURE", "11");
+define("EMAIL_ERROR_EDIT_MESSAGE_SET_FLAGS_AND_CLEAR_FLAGS","12");
+define("EMAIL_ERROR_DUMP_ATTACHMENTS_DATA","13");
+define("EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY","14");
 
 define("EMAIL_ERROR_IMAP_ERROR_MESSAGE", "Imap is not installed");
 define("EMAIL_ERROR_IMAP_STREAM_MESSAGE", "Failed to open imap stream");
@@ -26,6 +29,9 @@ define("EMAIL_ERROR_EDIT_MESSAGE_FLAGS_MESSAGE", "Failed to edit message flags")
 define("EMAIL_ERROR_SEARCH_HEADERS_MESSAGE", "No search headers parsed");
 define("EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE", "No message number parsed");
 define("EMAIL_ERROR_IMAP_CLOSE_FAILURE_MESSAGE", "Failed to close imap stream");
+define("EMAIL_ERROR_EDIT_MESSAGE_SET_FLAGS_AND_CLEAR_FLAGS_MESSAGE","Both setFlags() and clearFlags() have the same parameters");
+define("EMAIL_ERROR_DUMP_ATTACHMENTS_DATA_MESSAGE","No parsed message data");
+define("EMAIL_ERROR_DUMP_ATTACHMENTS_DIRECTORY_MESSAGE","No parsed directory");
 
 define("NO_ERROR", "No Error");
 
@@ -44,8 +50,9 @@ class EmailReaderError
      * EmailReaderError constructor.
      * @param $code
      * @param $message
+     * @param null $imapErrors
      */
-    function __construct($code, $message,$imapErrors=null)
+    function __construct($code, $message, $imapErrors = null)
     {
         $this->code = $code;
         $this->message = $message;

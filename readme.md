@@ -15,7 +15,7 @@ vendor\bin\codecept run
 ```
 $emailReader = new \Utilities\EmailReader("host", "username", "password", "port number (optional: default is 993)");
 
-$mailBox = $emailReader->openMailBox();
+$mailBox = $emailReader->openMailBox("flags" (optional: default is "/imap/ssl"));
 ```
 
 ###Get an array of mailbox folders to choose from
@@ -23,9 +23,26 @@ $mailBox = $emailReader->openMailBox();
 $folders = $emailReader->getMailBoxFolders($mailBox);
 ```
 
-####Open the desired mailbox folder
+####Open the desired mailbox folder from the returned array
 ```
-$folderName = "INBOX";
+$mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName[0]);
+```
 
-$mailBoxFolder = $this->emailReader->openMailBoxFolder($folderName);
+####Get the headers of all the messages in the selected mailbox folder
+```
+$headers = $emailReader->getMailBoxHeaders($mailBoxFolder);
+```
+
+###Read a selected message in the mailbox folder
+```
+$messageNumber = 418
+
+$email = $emailReader->getMessageData($messageNumber, $mailBoxFolder);
+```
+
+###Dump the attached files to a specified directory location
+```
+$directory = "C:\\Users\\user\\Downloads\\";
+
+$this->emailReader->dumpAttachments($email, $directory);
 ```
