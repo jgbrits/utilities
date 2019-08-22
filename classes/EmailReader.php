@@ -147,7 +147,12 @@ class EmailReader
             $parsedFolders = [];
             foreach ($folders as $id => $folder) {
                 $tempName = explode("}", $folder); //Comes in the form {server}Folder
-                $parsedFolders[] = $tempName[1];
+                if (isset($tempName[1])) {
+                    $parsedFolders[] = $tempName[1];
+                } else {
+                    $parsedFolders[] = $folder;
+                }
+
             }
 
             return $parsedFolders;
@@ -186,7 +191,7 @@ class EmailReader
         }
         $errors = $this->handleErrors();
 
-        if(isset($searchCriteria) && !empty($searchCriteria)) {
+        if (isset($searchCriteria) && !empty($searchCriteria)) {
             if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
                 $searchResult = imap_search($mailBox, $searchCriteria);
 
@@ -199,7 +204,7 @@ class EmailReader
             } else {
                 return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
             }
-        }else{
+        } else {
             return new EmailReaderError (EMAIL_ERROR_SEARCH_CRITERIA, EMAIL_ERROR_SEARCH_CRITERIA_MESSAGE, $errors);
         }
     }
