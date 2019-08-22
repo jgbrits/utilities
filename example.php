@@ -33,6 +33,25 @@ print_r($email);
 //Manual: Check that the above things have worked.
 
 
+$emailReader = new \Utilities\EmailReader("imap.gmail.com", "username", "password");
+
+
+$mailBox = $emailReader->openMailBox();
+
+$folders = $emailReader->getMailBoxFolders();
+
+$mailBoxFolder = $emailReader->openMailBoxFolder($folders[0]);
+
+$headers = $emailReader->getMailBoxHeaders();
+
+$email = $emailReader->getMessageData(7);
+
+$sequence = 3;
+$destination = "[Gmail]/Drafts";
+$moveResult = $emailReader->messageMove($sequence, $destination, $mailBoxFolder);
+
+$copyMessage = $emailReader->messageCopy(1, $destination);
+
 
 
 

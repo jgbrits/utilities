@@ -141,7 +141,7 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($mailBox) && !empty($mailBox)) {
+        if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
 
             $folders = imap_list($mailBox, "{{$this->host}}", "*");
             $parsedFolders = [];
@@ -185,17 +185,22 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($mailBox) && !empty($mailBox)) {
-            $searchResult = imap_search($mailBox, $searchCriteria);
 
-            if (isset($searchResult)) {
+        if(isset($searchCriteria) && !empty($searchCriteria)) {
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
+                $searchResult = imap_search($mailBox, $searchCriteria);
 
-                return $searchResult;
+                if (isset($searchResult)) {
+
+                    return $searchResult;
+                } else {
+                    return new EmailReaderError (EMAIL_ERROR_SEARCH_FAIL, EMAIL_ERROR_SEARCH_FAIL_MESSAGE, $errors);
+                }
             } else {
-                return new EmailReaderError (EMAIL_ERROR_SEARCH_FAIL, EMAIL_ERROR_SEARCH_FAIL_MESSAGE, $errors);
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
             }
-        } else {
-            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
+        }else{
+            return new EmailReaderError (EMAIL_ERROR_SEARCH_CRITERIA, EMAIL_ERROR_SEARCH_CRITERIA_MESSAGE, $errors);
         }
     }
 
@@ -211,22 +216,26 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($mailBox) && !empty($mailBox)) {
-            $searchResultHeaders = [];
+        if (isset($searchResult) && !empty($searchResult)) {
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
+                $searchResultHeaders = [];
 
-            foreach ($searchResult as $messageNumber) {
+                foreach ($searchResult as $messageNumber) {
 
-                $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
-            }
-            if (!isEmpty($searchResultHeaders)) {
+                    $searchResultHeaders[] = imap_header($mailBox, $messageNumber);
+                }
+                if (!empty($searchResultHeaders)) {
 
-                return $searchResultHeaders;
+                    return $searchResultHeaders;
+                } else {
+                    return new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS_FAIL, EMAIL_ERROR_SEARCH_HEADERS_FAIL_MESSAGE, $errors);
+                }
+
             } else {
-                return new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS_FAIL, EMAIL_ERROR_SEARCH_HEADERS_FAIL_MESSAGE, $errors);
+                return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
             }
-
         } else {
-            return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
+            return new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS_RESULT, EMAIL_ERROR_SEARCH_HEADERS_RESULT_MESSAGE, $errors);
         }
     }
 
@@ -241,36 +250,13 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($mailBox) && !empty($mailBox)) {
+        if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
 
             $mailBoxHeaders = imap_headers($mailBox);
 
             return $mailBoxHeaders;
         } else {
             return new EmailReaderError (EMAIL_ERROR_IMAP_STREAM, EMAIL_ERROR_IMAP_STREAM_MESSAGE, $errors);
-        }
-    }
-
-    /**
-     * * Gets all the message numbers from the parsed search headers
-     * @param Object $searchHeaders Contains object of headers for searched messages
-     * @return array|\Utilities\EmailReaderError
-     */
-    function getMessageNumbersForSearch($searchHeaders)
-    {
-        if (isset($searchHeaders) && !empty($searchHeaders)) {
-            $objectToArray = [];
-
-            foreach ($searchHeaders as $object) {
-                $objectToArray[] = get_object_vars($object);
-            }
-
-            $messageNumbersFromObject = array_column($objectToArray, "Msgno");
-
-            return $messageNumbersFromObject;
-
-        } else {
-            return new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS, EMAIL_ERROR_SEARCH_HEADERS_MESSAGE);
         }
     }
 
@@ -287,7 +273,7 @@ class EmailReader
         }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
-            if (isset($mailBox) && !empty($mailBox)) {
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
 
                 $messageHeader = imap_header($mailBox, $messageNumber);
 
@@ -314,7 +300,7 @@ class EmailReader
         }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
-            if (isset($mailBox) && !empty($mailBox)) {
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
                 $emailMessage = (object)[];
 
                 $structure = imap_fetchstructure($mailBox, $messageNumber);
@@ -353,7 +339,7 @@ class EmailReader
         }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
-            if (isset($mailBox) && !empty($mailBox)) {
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
 
                 $data = ($partNumber) ? imap_fetchbody($mailBox, $messageNumber, $partNumber) : imap_body($mailBox, $partNumber);
 
@@ -418,18 +404,18 @@ class EmailReader
      */
     function dumpAttachments($messageData, $directory)
     {
-        if (isset($messageData) && !empty($messageData)) {
+        if (isset($messageData) && !empty($messageData) && is_object($messageData)) {
             if (isset($directory) && !empty($directory)) {
-                if (isset($messageData->attachments) && !isEmpty($messageData->attachments)) {
+                if (isset($messageData->attachments) && !empty($messageData->attachments)) {
 
                     foreach ($messageData->attachments as $attachment) {
                         $fp = fopen($directory . $attachment->fileName, "w+");
 
-                        if ($messageData->encoding == ENCQUOTEDPRINTABLE) {
+                        if ($attachment->encoding == ENCQUOTEDPRINTABLE) {
 
                             fwrite($fp, quoted_printable_decode($attachment->data));
 
-                        } elseif ($messageData->encoding == ENCBASE64) {
+                        } elseif ($attachment->encoding == ENCBASE64) {
 
                             fwrite($fp, base64_decode($attachment->data));
 
@@ -451,7 +437,7 @@ class EmailReader
     /**
      * * Sets the message status by setting message flags
      * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
-     * @param String $newMessageStatus Message of parsed defined constant
+     * @param String $newMessageStatus Message of parsed defined constant: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT, EMAIL_ANSWERED
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
      */
@@ -461,14 +447,13 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($sequence) && !isEmpty($sequence)) {
-            if (isset($newMessageStatus) && !isEmpty($newMessageStatus)) {
-                if (isset($mailBox) && !empty($mailBox)) {
+        if (isset($sequence) && !empty($sequence)) {
+            if (isset($newMessageStatus) && !empty($newMessageStatus)) {
+                if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
                     $setFlagResult = imap_setflag_full($mailBox, $sequence, $newMessageStatus);
 
-                    imap_expunge($mailBox);
-
                     if (isset($setFlagResult)) {
+                        imap_expunge($mailBox);
                         return true;
                     } else {
                         return new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_SET_FLAG, EMAIL_ERROR_EDIT_MESSAGE_SET_FLAG, $errors);
@@ -488,7 +473,7 @@ class EmailReader
     /**
      * * Sets the message status by clearing message flags
      * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
-     * @param String $clearedMessageStatus Message of parsed defined constant
+     * @param String $clearedMessageStatus Message of parsed defined constant: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT, EMAIL_ANSWERED
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
      */
@@ -498,9 +483,9 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($sequence) && !isEmpty($sequence)) {
-            if (isset($clearedMessageStatus) && !isEmpty($clearedMessageStatus)) {
-                if (isset($mailBox) && !empty($mailBox)) {
+        if (isset($sequence) && !empty($sequence)) {
+            if (isset($clearedMessageStatus) && !empty($clearedMessageStatus)) {
+                if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
                     $clearFlagResult = imap_clearflag_full($mailBox, $sequence, $clearedMessageStatus);
 
                     imap_expunge($mailBox);
@@ -538,12 +523,11 @@ class EmailReader
 
         if (isset($sequence) && !empty($sequence)) {
             if (isset($destination) && !empty($destination)) {
-                if (isset($mailBox) && !empty($mailBox)) {
+                if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
                     $moveResult = imap_mail_move($mailBox, $sequence, $destination);
 
-                    imap_expunge($mailBox);
-
                     if (isset($moveResult)) {
+                        imap_expunge($mailBox);
                         return true;
                     } else {
                         return new EmailReaderError (EMAIL_ERROR_MESSAGE_MOVE, EMAIL_ERROR_MESSAGE_MOVE_MESSAGE, $errors);
@@ -555,7 +539,7 @@ class EmailReader
                 return new EmailReaderError (EMAIL_ERROR_DESTINATION_FOLDER, EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE, $errors);
             }
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE, $errors);
+            return new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE, EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE, $errors);
         }
     }
 
@@ -575,10 +559,10 @@ class EmailReader
 
         if (isset($sequence) && !empty($sequence)) {
             if (isset($destination) && !empty($destination)) {
-                if (isset($mailBox) && !empty($mailBox)) {
-                    $moveResult = imap_mail_copy($mailBox, $sequence, $destination);
+                if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
+                    $copyResult = imap_mail_copy($mailBox, $sequence, $destination);
 
-                    if (isset($moveResult)) {
+                    if (isset($copyResult)) {
                         return true;
                     } else {
                         return new EmailReaderError (EMAIL_ERROR_MESSAGE_MOVE, EMAIL_ERROR_MESSAGE_MOVE_MESSAGE, $errors);
@@ -590,7 +574,7 @@ class EmailReader
                 return new EmailReaderError (EMAIL_ERROR_DESTINATION_FOLDER, EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE, $errors);
             }
         } else {
-            return new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER_MESSAGE, $errors);
+            return new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE, EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE, $errors);
         }
     }
 
@@ -608,12 +592,12 @@ class EmailReader
         }
         $errors = $this->handleErrors();
         if (isset($messageNumber) && !empty($messageNumber)) {
-            if (isset($mailBox) && !empty($mailBox)) {
-                $deleteResult = imap_delete($mailBox, $messageNumber);
+            if (isset($mailBox) && !empty($mailBox) && is_resource($mailBox)) {
+                //   $deleteResult = imap_delete($mailBox, $messageNumber);
+                $setFlagResult = imap_setflag_full($mailBox, $messageNumber, EMAIL_DELETED);
+                if (isset($setFlagResult)) {
 
-                imap_expunge($mailBox);
-
-                if (isset($deleteResult)) {
+                    imap_expunge($mailBox);
                     return true;
                 } else {
                     return new EmailReaderError (EMAIL_ERROR_DELETE_MESSAGE, EMAIL_ERROR_DELETE_MESSAGE_MESSAGE, $errors);
@@ -638,7 +622,7 @@ class EmailReader
             $mailBox = $this->mailBox;
         }
         $errors = $this->handleErrors();
-        if (isset($mailBox)) {
+        if (isset($mailBox) && is_resource($mailBox)) {
             $closeResult = imap_close($mailBox, CL_EXPUNGE);
 
             if ($closeResult) {
