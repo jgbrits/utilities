@@ -1,4 +1,13 @@
 {
+  "name": "justinkbruce/utilities",
+  "description": "utilities",
+  "type": "project",
+  "authors": [
+    {
+      "name": "Justin Bruce",
+      "email": "justinbruce34@gmail.com"
+    }
+  ],
   "require-dev": {
     "codeception/codeception": "^3.0",
     "phpdocumentor/phpdocumentor": "^2.0.5"
