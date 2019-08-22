@@ -16,11 +16,12 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     protected function _before()
     {
         require_once "./classes/EmailReader.php";
-        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "testemailclass654321@gmail.com", "test!23456789");
+        $this->emailReader = new \Utilities\EmailReader("imap.gmail.com", "username", "password");
     }
 
     protected function _after()
     {
+        $this->emailReader->close();
     }
 
     public function testOpenMailBox()
@@ -86,6 +87,10 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($searchResult, "Method failed");
         $this->assertEquals(2, $searchArrayCount, "Something went wrong with the method");
 
+        $errors2 = $this->emailReader->handleErrors();
+        $searchResult2 = $this->emailReader->search("", $this->testOpenMailBoxFolder());
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_SEARCH_CRITERIA, EMAIL_ERROR_SEARCH_CRITERIA_MESSAGE, $errors2), $searchResult2, "No or incorrect error returned");
+
         return $searchResult;
     }
 
@@ -100,6 +105,9 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $this->assertNotEmpty($messageHeaders, "Array is empty");
         $this->assertEquals(2, $messageHeadersArrayCount, "Something went wrong in the method");
 
+        $errors2 = $this->emailReader->handleErrors();
+        $messageHeaders2 = $this->emailReader->getSearchResultHeaders("", $this->testOpenMailBoxFolder());
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS_RESULT, EMAIL_ERROR_SEARCH_HEADERS_RESULT_MESSAGE, $errors2), $messageHeaders2, "No or incorrect error returned");
         return $messageHeaders;
     }
 
@@ -120,6 +128,9 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
         $this->assertIsArray($messageNumbers, "Returned was not an array of message numbers");
         $this->assertNotEmpty($messageNumbers, "Returned was empty");
+
+        $messageNumbers2 = $this->emailReader->getMessageNumbersForSearch($this->testGetSearchResultHeaders());
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_SEARCH_HEADERS, EMAIL_ERROR_SEARCH_HEADERS_MESSAGE), $messageNumbers2, "No or incorrect error returned");
 
         return $messageNumbers;
     }
@@ -155,6 +166,11 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
         $this->assertIsObject($messageData, "Returned data is not an object");
         $this->assertNotEmpty($messageData, "Returned array is empty");
         $this->assertObjectHasAttribute("htmlMessage", $messageData, "Returned object doesn't have the attribute");
+
+        $errors2 = $this->emailReader->handleErrors();
+        $messageNumber2 = null;
+        $messageData2 = $this->emailReader->getMessageData($messageNumber2, $this->testOpenMailBoxFolder());
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_MESSAGE_NUMBER, EMAIL_ERROR_MESSAGE_NUMBER, $errors2), $messageData2, "No or incorrect error returned");
 
 
         return $messageData;
@@ -259,38 +275,36 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     }
 
-    /*
-        public function testMessageMove()
-        {
-            $sequence = 12;
-            $folders = $this->testGetMailBoxFolders();
-            $destination = $folders[2];
-            $messageMoveResult = $this->emailReader->messageMove($sequence, $destination, $this->testOpenMailBoxFolder());
-            $this->assertTrue($messageMoveResult, "Returned was not true");
 
-            $errors2 = $this->emailReader->handleErrors();
-            $sequence2 = null;
-            $destination2 = null;
-            $messageMoveResult2 = $this->emailReader->messageMove($sequence2, $destination2, $this->testOpenMailBoxFolder());
+    public function testMessageMove()
+    {
+        $sequence = 12;
+        $destination = "[Gmail]/Spam";
+        $messageMoveResult = $this->emailReader->messageMove($sequence, $destination, $this->testOpenMailBoxFolder());
+        $this->assertTrue($messageMoveResult, "Returned was not true");
 
-            $this->assertEquals(new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE, EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE, $errors2), $messageMoveResult2, "No or incorrect error returned");
+        $errors2 = $this->emailReader->handleErrors();
+        $sequence2 = null;
+        $destination2 = null;
+        $messageMoveResult2 = $this->emailReader->messageMove($sequence2, $destination2, $this->testOpenMailBoxFolder());
 
-            $errors3 = $this->emailReader->handleErrors();
-            $sequence3 = 12;
-            $destination3 = null;
-            $messageMoveResult3 = $this->emailReader->messageMove($sequence3, $destination3, $this->testOpenMailBoxFolder());
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE, EMAIL_ERROR_EDIT_MESSAGE_STATUS_SEQUENCE_MESSAGE, $errors2), $messageMoveResult2, "No or incorrect error returned");
 
-            $this->assertEquals(new EmailReaderError (EMAIL_ERROR_DESTINATION_FOLDER, EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE, $errors3), $messageMoveResult3, "No or incorrect error returned");
+        $errors3 = $this->emailReader->handleErrors();
+        $sequence3 = 12;
+        $destination3 = null;
+        $messageMoveResult3 = $this->emailReader->messageMove($sequence3, $destination3, $this->testOpenMailBoxFolder());
 
-        }
-    */
+        $this->assertEquals(new EmailReaderError (EMAIL_ERROR_DESTINATION_FOLDER, EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE, $errors3), $messageMoveResult3, "No or incorrect error returned");
+
+    }
+
     public function testMessageCopy()
     {
         $sequence = 1;
-        $destination = "Drafts";
+        $destination = "[Gmail]/Spam";
         $messageCopyResult = $this->emailReader->messageCopy($sequence, $destination, $this->testOpenMailBoxFolder());
         $this->assertTrue($messageCopyResult);
-
 
         $errors2 = $this->emailReader->handleErrors();
         $sequence2 = null;
@@ -310,7 +324,6 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     {
         $messageNumber = 11;
         $mailBox = $this->testOpenMailBoxFolder();
-        codecept_debug($mailBox);
         $messageDeleteResult = $this->emailReader->messageDelete($messageNumber, $mailBox);
         $this->assertTrue($messageDeleteResult);
 
@@ -323,29 +336,5 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     }
 
-    public function testExample()
-    {
-
-        $emailReader = new \Utilities\EmailReader("imap.gmail.com", "testemailclass654321@gmail.com", "test!23456789");
-
-
-        $mailBox = $emailReader->openMailBox();
-
-        $folders = $emailReader->getMailBoxFolders();
-
-        $mailBoxFolder = $emailReader->openMailBoxFolder($folders[0]);
-
-        $headers = $emailReader->getMailBoxHeaders();
-
-        $email = $emailReader->getMessageData(6);
-
-        $sequence = 12;
-        $destination = $folders[2];
-        //$moveResult = $emailReader->messageMove($sequence, $destination, $mailBoxFolder);
-
-        //$copyMessage = $emailReader->messageCopy(0, $folders[4]);
-
-        codecept_debug($email);
-    }
 
 }

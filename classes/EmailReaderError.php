@@ -29,6 +29,8 @@ define("EMAIL_ERROR_DESTINATION_FOLDER","80021");
 define("EMAIL_ERROR_MESSAGE_MOVE","80022");
 define("EMAIL_ERROR_SEARCH_FAIL","80023");
 define("EMAIL_ERROR_SEARCH_HEADERS_FAIL","80024");
+define("EMAIL_ERROR_SEARCH_HEADERS_RESULT","80025");
+define("EMAIL_ERROR_SEARCH_CRITERIA","80026");
 
 /**
  * Defining constants for error messages
@@ -57,6 +59,8 @@ define("EMAIL_ERROR_DESTINATION_FOLDER_MESSAGE","No valid message folder parsed"
 define("EMAIL_ERROR_MESSAGE_MOVE_MESSAGE","Failed to move message");
 define("EMAIL_ERROR_SEARCH_FAIL_MESSAGE","Failed to find messages of parsed search criteria");
 define("EMAIL_ERROR_SEARCH_HEADERS_FAIL_MESSAGE","No headers found from parsed searched message number(s)");
+define("EMAIL_ERROR_SEARCH_HEADERS_RESULT_MESSAGE","No search results parsed");
+define("EMAIL_ERROR_SEARCH_CRITERIA_MESSAGE","Invalid search criteria");
 
 define("EMAIL_ERROR_NO_ERROR", "No Error");
 
