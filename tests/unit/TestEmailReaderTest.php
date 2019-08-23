@@ -4,7 +4,6 @@ use Utilities\EmailReaderError;
 
 class TestEmailReaderTest extends \Codeception\Test\Unit
 {
-    //@todo Fix redundancy with $emailReader instantiation
 
     /**
      * @var \UnitTester
@@ -76,7 +75,7 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
 
     public function testSearch()
     {
-        //List of criteria: https://www.php.net/manual/en/function.imap-search.php
+        //List of search criteria: https://www.php.net/manual/en/function.imap-search.php
         $searchCriteria = "SUBJECT \"test\"";
 
         $searchResult = $this->emailReader->search($searchCriteria, $this->testOpenMailBoxFolder());
@@ -254,14 +253,14 @@ class TestEmailReaderTest extends \Codeception\Test\Unit
     public function testDumpAttachments()
     {
         $messageData = $this->testGetMessageData();
-        $directory = "C:\\Users\\justi\\Downloads\\";
+        $directory = "C:\\Users\\user\\Downloads\\";
 
         $dumpAttachmentsResult = $this->emailReader->dumpAttachments($messageData, $directory);
 
         $this->assertTrue($dumpAttachmentsResult);
 
         $messageData2 = null;
-        $directory2 = "C:\\Users\\justi\\Downloads\\";
+        $directory2 = "C:\\Users\\user\\Downloads\\";
         $dumpAttachmentsResult2 = $this->emailReader->dumpAttachments($messageData2, $directory2);
 
         $this->assertEquals(new EmailReaderError(EMAIL_ERROR_DUMP_ATTACHMENTS_DATA, EMAIL_ERROR_DUMP_ATTACHMENTS_DATA_MESSAGE, null), $dumpAttachmentsResult2, "No or incorrect error returned");

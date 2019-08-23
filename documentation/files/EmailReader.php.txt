@@ -1,6 +1,8 @@
 <?php
 
-
+/**
+ * EmailReader is used read and interact with emails from an email server
+ */
 namespace Utilities;
 
 use Utilities\EmailReaderError;
@@ -16,7 +18,7 @@ define("EMAIL_DRAFT", "\\Draft");
 define("EMAIL_ANSWERED", "\\Answered");
 
 /**
- * Class EmailReader Used to read and interact with emails from an email server
+ * Class EmailReader Used to hold all the functions required for use
  * @package Utilities Namespace
  */
 class EmailReader
@@ -107,6 +109,7 @@ class EmailReader
      * @param String $flags Use URL to see available flags
      * @param null|String $folderName Folder name of opened mailbox folder when called by openMailBoxFolder()
      * @return resource|\Utilities\EmailReaderError|null IMAPStream or error message on failure
+     * @example examples/exampleOpen.php
      */
     function openMailBox($flags = "/imap/ssl", $folderName = null)
     {
@@ -134,6 +137,7 @@ class EmailReader
      * * Gets a list of mailbox folders
      * @param null|resource $mailBox IMAPStream
      * @return array|\Utilities\EmailReaderError array[ [0] => , [1] => ] or error message on failure
+     * @example examples/exampleFolders.php
      */
     function getMailBoxFolders($mailBox = null)
     {
@@ -165,6 +169,7 @@ class EmailReader
      * * Opens a mailbox stream in a specific mailbox folder
      * @param String $folderName Folder name
      * @return resource|\Utilities\EmailReaderError IMAPStream in the opened mailbox folder or error message on failure
+     * @example examples/exampleOpenFolder.php
      */
     function openMailBoxFolder($folderName = null)
     {
@@ -180,9 +185,10 @@ class EmailReader
 
     /**
      * * Gets the message numbers of all messages that contain the parsed criteria
-     * @param String $searchCriteria Search criteria
+     * @param String $searchCriteria Search criteria. List of search criteria: https://www.php.net/manual/en/function.imap-search.php
      * @param null|resource $mailBox IMAPStream
      * @return array|\Utilities\EmailReaderError array[ [0] => , [1]=> ] or error message on failure
+     * @example examples/exampleSearch
      */
     function search($searchCriteria, $mailBox = null)
     {
@@ -214,6 +220,7 @@ class EmailReader
      * @param array $searchResult Array of search results from search()
      * @param null|resource $mailBox IMAPStream
      * @return array|\Utilities\EmailReaderError array[ [0] => , [1] => ] or error message on failure
+     * @example examples/exampleSearchResultHeaders.php
      */
     function getSearchResultHeaders($searchResult, $mailBox = null)
     {
@@ -248,6 +255,7 @@ class EmailReader
      * * Gets all the headers in the mailbox folder
      * @param null|resource $mailBox IMAPStream
      * @return array|\Utilities\EmailReaderError [ [0] => , [1] => ] or error message on failure
+     * @example examples/exampleMailBoxHeaders.php
      */
     function getMailBoxHeaders($mailBox = null)
     {
@@ -270,6 +278,7 @@ class EmailReader
      * @param Integer $messageNumber Message number
      * @param null|resource $mailBox IMAPStream
      * @return object
+     * @example examples/exampleMessageHeader.php
      */
     function getMessageHeader($messageNumber, $mailBox = null)
     {
@@ -297,6 +306,7 @@ class EmailReader
      * @param Integer $messageNumber Message number
      * @param null|resource $mailBox IMAPStream
      * @return object {"htmlMessage" => , "plainMessage" => , "charset" => , "attachments" => };
+     * @example examples/exampleMessageData.php
      */
     function getMessageData($messageNumber, $mailBox = null)
     {
@@ -406,6 +416,7 @@ class EmailReader
      * @param Object $messageData object{"htmlMessage" => , "plainMessage" => , "charset" => , "attachments" => };
      * @param String $directory Directory destination
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
+     * @example examples/exampleDumpAttachments.php
      */
     function dumpAttachments($messageData, $directory)
     {
@@ -441,10 +452,11 @@ class EmailReader
 
     /**
      * * Sets the message status by setting message flags
-     * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param Integer|String $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param String $newMessageStatus Message of parsed defined constant: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT, EMAIL_ANSWERED
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
+     * @example examples/exampleSetMessageStatus.php
      */
     function setMessageStatus($sequence, $newMessageStatus, $mailBox = null)
     {
@@ -477,10 +489,11 @@ class EmailReader
 
     /**
      * * Sets the message status by clearing message flags
-     * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param Integer|String $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param String $clearedMessageStatus Message of parsed defined constant: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT, EMAIL_ANSWERED
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
+     * @example examples/exampleClearMessageStatus.php
      */
     function clearMessageStatus($sequence, $clearedMessageStatus, $mailBox = null)
     {
@@ -514,10 +527,11 @@ class EmailReader
 
     /**
      * * Moves message(s) to a specified folder
-     * @param $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param Integer|String $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param String $destination Destination mailbox folder name
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
+     * @example examples/exampleMessageMove.php
      */
     function messageMove($sequence, $destination, $mailBox = null)
     {
@@ -550,10 +564,11 @@ class EmailReader
 
     /**
      * * Copies message(s) and pastes it in a specified folder
-     * @param String of Integer(s) $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
+     * @param Integer|String  $sequence - contains the message number(s) for the flags to be set on. Example: "2,5" - message numbers 2 to 5
      * @param String $destination Destination mailbox folder name
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True on success or error message on failure
+     * @example examples/exampleMessageCopy.php
      */
     function messageCopy($sequence, $destination, $mailBox = null)
     {
@@ -589,6 +604,7 @@ class EmailReader
      * @param Integer $messageNumber The message number
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True for success or error on failure
+     * @example examples/exampleMessageDelete.php
      */
     function messageDelete($messageNumber, $mailBox = null)
     {
@@ -620,6 +636,7 @@ class EmailReader
      * * Closes the mailbox stream
      * @param null|resource $mailBox IMAPStream
      * @return bool|\Utilities\EmailReaderError True for success or error message on failure
+     * @example examples/exampleClose.php
      */
     function close($mailBox = null)
     {

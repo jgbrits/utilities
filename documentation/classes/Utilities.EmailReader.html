@@ -114,7 +114,7 @@
                         <ul class="dropdown-menu">
                             <li>
                                 <a href="../reports/errors.html">
-                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">2</span>
+                                                                                                                                                                                                                                                                    <i class="icon-list-alt"></i>&#160;Errors <span class="label label-info pull-right">1</span>
                                 </a>
                             </li>
                             <li>
@@ -144,19 +144,19 @@
                                 <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-588679351"></a>
+                                    <a class="accordion-toggle " data-toggle="collapse" data-target="#namespace-456198591"></a>
                                 <a href="../namespaces/default.html" style="margin-left: 30px; padding-left: 0">\</a>
             </div>
-            <div id="namespace-588679351" class="accordion-body collapse in">
+            <div id="namespace-456198591" class="accordion-body collapse in">
                 <div class="accordion-inner">
 
                                                     <div class="accordion" style="margin-bottom: 0">
         <div class="accordion-group">
             <div class="accordion-heading">
-                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-1440410908"></a>
+                                    <a class="accordion-toggle collapsed" data-toggle="collapse" data-target="#namespace-401487657"></a>
                                 <a href="../namespaces/Utilities.html" style="margin-left: 30px; padding-left: 0">Utilities</a>
             </div>
-            <div id="namespace-1440410908" class="accordion-body collapse ">
+            <div id="namespace-401487657" class="accordion-body collapse ">
                 <div class="accordion-inner">
 
                     
@@ -189,7 +189,7 @@
                     <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal"><i class="icon-code"></i></a>
 
                     <h1><small>\Utilities</small>EmailReader</h1>
-                    <p><em>Class EmailReader Used to read and interact with emails from an email server</em></p>
+                    <p><em>Class EmailReader Used to hold all the functions required for use</em></p>
                     
                     
                                         
@@ -591,6 +591,10 @@ Link to optional flags: [https://www.php.net/manual/en/function.imap-open.php]  
 
 require &quot;./vendor/autoload.php&quot;;
 
+
+/**
+ * Instantiate the constructor and open the IMAPStream
+ */
 $host = &quot;&quot;;
 $username = &quot;&quot;;
 $password = &quot;&quot;;
@@ -671,7 +675,26 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     resource|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>|null
                                             &mdash; <p>IMAPStream or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+
+require &quot;./vendor/autoload.php&quot;;
+
+
+/**
+ * Instantiate the constructor and open the IMAPStream
+ */
+$host = &quot;&quot;;
+$username = &quot;&quot;;
+$password = &quot;&quot;;
+$port = &quot;&quot;; //(optional: default is 993)
+$flags = &quot;&quot;; //(optional: default is &quot;/imap/ssl&quot;)
+
+$emailReader = new \Utilities\EmailReader($host, $username, $password, $port);
+
+$mailBox = $emailReader-&gt;openMailBox($flags);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -708,7 +731,15 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     array|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>array[ [0] =&gt; , [1] =&gt; ] or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+
+/**
+ * After opening the IMAPStream, get an array of mailbox folders
+ */
+$folders = $emailReader-&gt;getMailBoxFolders();</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -745,7 +776,15 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     resource|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>IMAPStream in the opened mailbox folder or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+
+/**
+ * Using the returned array of mailbox folders, open an IMAPStream to the selected mailbox folder to specify where you are getting your messages from
+ */
+$mailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[0]);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -773,7 +812,7 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                                                     <tr>
                                 <td>String</td>
                                 <td>$searchCriteria </td>
-                                <td><p>Search criteria</p></td>
+                                <td><p>Search criteria. List of search criteria: <a href="https://www.php.net/manual/en/function.imap-search.php">https://www.php.net/manual/en/function.imap-search.php</a></p></td>
                             </tr>
                                                     <tr>
                                 <td>null|resource</td>
@@ -787,7 +826,10 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     array|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>array[ [0] =&gt; , [1]=&gt; ] or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">** File not found : examples/exampleSearch **</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -829,7 +871,19 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     array|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>array[ [0] =&gt; , [1] =&gt; ] or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Use the array of search result message numbers to get their respective headers
+ */
+
+$searchCriteria = &quot;SUBJECT \&quot;test\&quot;&quot;;
+
+$searchResult = $emailReader-&gt;search($searchCriteria);
+
+$emailReader-&gt;getSearchResultHeaders($searchResult);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -866,7 +920,25 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     array|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>[ [0] =&gt; , [1] =&gt; ] or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Get an array of all the headers in the mailbox folder
+ */
+
+$emailHeaders = $emailReader-&gt;getMailBoxHeaders();
+
+/**
+ * If you want to get the headers of a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[1]);
+
+$emailHeaders2 = $emailReader-&gt;getMailBoxFolders($otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -907,7 +979,25 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                                     <h4>Returns</h4>
                     object
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Get the header of a specific message number in the mailbox folder
+ */
+
+$messageHeader = $emailReader-&gt;getMessageHeader(2);
+
+/**
+ * If you want to get a message header of a message in a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$messageHeader2 = $emailReader-&gt;getMessageHeader(2, $otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -949,7 +1039,25 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     object
                                             &mdash; <p>{&quot;htmlMessage&quot; =&gt; , &quot;plainMessage&quot; =&gt; , &quot;charset&quot; =&gt; , &quot;attachments&quot; =&gt; };</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Get an object containing the message&#039;s data (email data)
+ */
+
+$messageData = $emailReader-&gt;getMessageData(2);
+
+/**
+ * If you want to get message data of a message in a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$messageData = $emailReader-&gt;getMessageData(2, $otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1042,7 +1150,17 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True on success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Dump the attachments in the message data object from getMessageData() to a specified directory location
+ */
+
+$directoryLocation = &quot;C:\\Users\\user\\Downloads\\&quot;;
+
+$emailReader-&gt;dumpAttachments($messageData, $directoryLocation);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1061,14 +1179,14 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
             <article class="method">
                 <h3 class="public ">setMessageStatus()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">setMessageStatus(  <span class="argument">$sequence</span>, String  <span class="argument">$newMessageStatus</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
+                <pre class="signature" style="margin-right: 54px;">setMessageStatus(Integer|String  <span class="argument">$sequence</span>, String  <span class="argument">$newMessageStatus</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
                 <p><em>* Sets the message status by setting message flags</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>Integer|String</td>
                                 <td>$sequence </td>
                                 <td><ul>
 <li>contains the message number(s) for the flags to be set on. Example: &quot;2,5&quot; - message numbers 2 to 5</li>
@@ -1091,7 +1209,28 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True on success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Set flags to a message in the mailbox folder
+ * If you don&#039;t know message flags, use the predefined constants: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT or EMAIL_ANSWERED
+ */
+
+$sequence = &quot;2,5&quot;; //message numbers 2 to 5
+
+$emailReader-&gt;setMessageStatus($sequence, EMAIL_SEEN);
+
+/**
+ * If you want to set a flag of a message in a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$messageHeader2 = $emailReader-&gt;setMessageStatus($sequence, EMAIL_ANSWERED, $otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1110,14 +1249,14 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
             <article class="method">
                 <h3 class="public ">clearMessageStatus()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">clearMessageStatus(  <span class="argument">$sequence</span>, String  <span class="argument">$clearedMessageStatus</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
+                <pre class="signature" style="margin-right: 54px;">clearMessageStatus(Integer|String  <span class="argument">$sequence</span>, String  <span class="argument">$clearedMessageStatus</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
                 <p><em>* Sets the message status by clearing message flags</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>Integer|String</td>
                                 <td>$sequence </td>
                                 <td><ul>
 <li>contains the message number(s) for the flags to be set on. Example: &quot;2,5&quot; - message numbers 2 to 5</li>
@@ -1140,7 +1279,28 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True on success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Clear flags to a message in the mailbox folder
+ * If you don&#039;t know message flags, use the predefined constants: EMAIL_SEEN, EMAIL_FLAGGED, EMAIL_DELETED, EMAIL_DRAFT or EMAIL_ANSWERED
+ */
+
+$sequence = &quot;2,5&quot;; //message numbers 2 to 5
+
+$emailReader-&gt;clearMessageStatus($sequence, EMAIL_SEEN); //Message now becomes flagged as &quot;\\Unseen&quot;
+
+/**
+ * If you want to clear a flag of a message in a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$messageHeader2 = $emailReader-&gt;clearMessageStatus($sequence, EMAIL_ANSWERED, $otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1159,14 +1319,14 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
             <article class="method">
                 <h3 class="public ">messageMove()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">messageMove(  <span class="argument">$sequence</span>, String  <span class="argument">$destination</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
+                <pre class="signature" style="margin-right: 54px;">messageMove(Integer|String  <span class="argument">$sequence</span>, String  <span class="argument">$destination</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
                 <p><em>* Moves message(s) to a specified folder</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>Integer|String</td>
                                 <td>$sequence </td>
                                 <td><ul>
 <li>contains the message number(s) for the flags to be set on. Example: &quot;2,5&quot; - message numbers 2 to 5</li>
@@ -1189,7 +1349,18 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True on success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Move a message to another mailbox folder
+ * Note: Some email servers require certain flags to be set to messages before being able to move them to their respective mailbox folders
+ */
+
+$emailReader-&gt;setMessageStatus(2, EMAIL_DRAFT);
+
+$emailReader-&gt;messageMove(2, $folders[2]); // Example: Destination folder = $folders[2] ([Gmail]/Drafts)</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1208,16 +1379,18 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
             <article class="method">
                 <h3 class="public ">messageCopy()</h3>
                 <a href="#source-view" role="button" class="pull-right btn" data-toggle="modal" style="font-size: 1.1em; padding: 9px 14px"><i class="icon-code"></i></a>
-                <pre class="signature" style="margin-right: 54px;">messageCopy(  <span class="argument">$sequence</span>, String  <span class="argument">$destination</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
+                <pre class="signature" style="margin-right: 54px;">messageCopy(Integer|String  <span class="argument">$sequence</span>, String  <span class="argument">$destination</span>, null|resource  <span class="argument">$mailBox = null</span>) : boolean|\Utilities\EmailReaderError</pre>
                 <p><em>* Copies message(s) and pastes it in a specified folder</em></p>
                 
 
                                     <h4>Parameters</h4>
                     <table class="table table-condensed table-hover">
                                                     <tr>
-                                <td></td>
+                                <td>Integer|String</td>
                                 <td>$sequence </td>
-                                <td></td>
+                                <td><ul>
+<li>contains the message number(s) for the flags to be set on. Example: &quot;2,5&quot; - message numbers 2 to 5</li>
+</ul></td>
                             </tr>
                                                     <tr>
                                 <td>String</td>
@@ -1236,7 +1409,18 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True on success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Copy a message to another mailbox folder
+ * Note: Some email servers require certain flags to be set to messages before being able to copy them to their respective mailbox folders
+ */
+
+$emailReader-&gt;setMessageStatus(2, EMAIL_DRAFT);
+
+$emailReader-&gt;messageCopy(2, $folders[2]); // Example: Destination folder = $folders[2] ([Gmail]/Drafts)</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1278,7 +1462,25 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True for success or error on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Delete a specific message number from the mailbox folder
+ */
+
+$emailReader-&gt;messageDelete(2); //Deletes message number 2 in the mailbox folder
+
+/**
+ * If you want to delete a message in a different mailbox folder
+ * Note: If you do this you might have to close the newly opened IMAPStream
+ */
+
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$emailReader-&gt;messageDelete(2, $otherMailBoxFolder);
+//$emailReader-&gt;close($otherMailBoxFolder);</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1315,7 +1517,22 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                     boolean|<a href="../classes/Utilities.EmailReaderError.html">\Utilities\EmailReaderError</a>
                                             &mdash; <p>True for success or error message on failure</p>
                                     				
-                            </article>
+                                                            <h4>Examples</h4>
+                                                                <h5></h5>
+                        <pre class="pre-scrollable">&lt;?php
+/**
+ * Close the IMAPStream
+ */
+
+$emailReader-&gt;close(); //Closes current IMAPStream
+
+/**
+ * If you want to close a different IMAPSteam you can parse it as a resource
+ */
+$otherMailBoxFolder = $emailReader-&gt;openMailBoxFolder($folders[2]);
+
+$emailReader-&gt;close($otherMailBoxFolder); //Closes a different IMAPStream</pre>
+                                                </article>
         </div>
         <aside class="span4 detailsbar">
             <h1><i class="icon-arrow-down"></i></h1>
@@ -1378,7 +1595,7 @@ $mailBox = $emailReader-&gt;openMailBox($flags);</pre>
                 <section class="span10 offset1">
                     <hr />
                     Documentation is powered by <a href="http://www.phpdoc.org/">phpDocumentor </a> and authored
-                    on August 22nd, 2019 at 12:45.
+                    on August 23rd, 2019 at 08:47.
                 </section>
             </section>
         </section>
