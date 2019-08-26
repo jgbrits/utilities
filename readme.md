@@ -110,9 +110,9 @@ $emailReader->messageDelete($messageNumber);
 
 ### Search for messages
 #### Search for messages numbers containing a specific criteria
-Returns an array of message numbers containing the search criteria
+Returns an array of message numbers containing the search criteria. A list of search criteria can be found here: https://www.php.net/manual/en/function.imap-search.php
 ```
-$searchCriteria = "test";
+$searchCriteria = "SUBJECT \"test\"";
 
 $searchResults = $emailReader->search($searchCriteria);
 ```
