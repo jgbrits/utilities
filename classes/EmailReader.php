@@ -118,10 +118,13 @@ class EmailReader
         }
         if (function_exists("imap_open")) {
 
-            $errors = $this->handleErrors();
             $this->mailBox = imap_open("{{$this->host}:{$this->port}{$this->flags}}{$folderName}", $this->username, $this->password);
 
-            if (isset($this->mailBox)) {
+            // Check for errors only after mailbox was tried to be opened
+            $errors = $this->handleErrors();
+
+            // imap_open returns false if mailbox could not be opened (isset does not work here)
+            if ($this->mailBox) {
                 return $this->mailBox;
             } else {
 
