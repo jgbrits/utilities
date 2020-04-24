@@ -328,6 +328,11 @@ class EmailReader
                     }
                 }
 
+                // Clear email message and attachments from email class object, to be empty for when next message is read
+                $this->plainMessage = null;
+                $this->htmlMessage = null;
+                $this->attachments = null;
+
                 return $emailMessage;
 
             } else {
